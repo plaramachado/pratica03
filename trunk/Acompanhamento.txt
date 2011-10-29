@@ -1,0 +1,13 @@
+Como vocês sabem, da pra dividir o projeto em:
+Cliente - Servidor
+Cliente - servidor - cliente
+cliente - cliente
+
+Vou começar a programar a parte cliente - servidor por que acho que é mais “solida” na especificação.
+
+A parte cliente - servidor - cliente, quem quiser programá-la é só assumir que o cliente e o servidor tem uma conexão TCP continua
+
+A parte cliente - cliente é só assumir que um cliente tem IP e porta do outro cliente(que está listenando nessa porta. Mãos em obra?
+
+Pedro, atualmente: cliente - servidor
+
