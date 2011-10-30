@@ -1,13 +1,16 @@
-Como vocês sabem, da pra dividir o projeto em:
+Como vocÃªs sabem, da pra dividir o projeto em:
 Cliente - Servidor
 Cliente - servidor - cliente
 cliente - cliente
 
-Vou começar a programar a parte cliente - servidor por que acho que é mais “solida” na especificação.
+Vou comeÃ§ar a programar a parte cliente - servidor por que acho que Ã© mais Â“solidaÂ” na especificaÃ§Ã£o.
 
-A parte cliente - servidor - cliente, quem quiser programá-la é só assumir que o cliente e o servidor tem uma conexão TCP continua
+A parte cliente - servidor - cliente, quem quiser programÃ¡-la Ã© sÃ³ assumir que o cliente e o servidor tem uma conexÃ£o TCP continua
 
-A parte cliente - cliente é só assumir que um cliente tem IP e porta do outro cliente(que está listenando nessa porta. Mãos em obra?
+A parte cliente - cliente Ã© sÃ³ assumir que um cliente tem IP e porta do outro cliente(que estÃ¡ listenando nessa porta. MÃ£os em obra?
 
 Pedro, atualmente: cliente - servidor
+
+Eu vou fazer as interfaces grÃ¡ficas, do cliente e do servidor. Prevejo sÃ©rios conflitos na hora de integrar isso =P.
+Felipe: Interface grÃ¡fica.
 
