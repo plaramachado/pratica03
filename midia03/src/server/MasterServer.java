@@ -4,7 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import server.Server.ClientListener;
+import server.Server.ServerListener;
 
 
 public class MasterServer {
@@ -13,7 +13,7 @@ public class MasterServer {
 	
 	ArrayList<Server> servers = new ArrayList<Server>();
 	ArrayList<RegisteredClient> clients = new ArrayList<RegisteredClient>();
-	ClientListener lis = new ClientListener() {
+	ServerListener lis = new ServerListener() {
 		
 		@Override
 		public boolean getClient(RegisteredClient c) {
@@ -21,11 +21,18 @@ public class MasterServer {
 				RegisteredClient registeredClient = clients.get(i);
 				if(registeredClient.sameName(c)){
 					if(registeredClient.samePass(c)){
-						if(registeredClient.isOnline()) return false; //he's already online
-						registeredClient.setOnline(true);
+						if(registeredClient.isOnline()){
+							System.out.println("Already Online");
+							return false; //he's already online
+							
+						}
+						c.setOnline(true);
+						clients.set(i, c);
+						
 						updateClients();
 						return true; //correct password
 					} else{
+						System.out.println("Wrong Password");
 						return false; //wrong password
 					}
 				}
@@ -34,6 +41,13 @@ public class MasterServer {
 			c.setOnline(true);
 			updateClients();
 			return true; //registered
+		}
+
+		@Override
+		public void offClient(RegisteredClient c, Server s) {
+			if(c != null) c.setOnline(false);
+			servers.remove(s);
+			updateClients();
 		}
 
 	};

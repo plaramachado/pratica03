@@ -16,9 +16,9 @@ public class Server {
 	private BufferedWriter bufferedWriter;
 	private Socket tcpConnexion;
 	private RegisteredClient client; //data for the client of this connection
-	ClientListener listener;
+	ServerListener listener;
 	
-	public void setListener(ClientListener listener) {
+	public void setListener(ServerListener listener) {
 		this.listener = listener;
 	}
 	
@@ -29,8 +29,9 @@ public class Server {
 	 * @author Pedro
 	 *
 	 */
-	public static interface ClientListener{
-		public boolean getClient(RegisteredClient c);
+	public static interface ServerListener{
+		public boolean getClient(RegisteredClient c); //when a client tries a register
+		public void offClient(RegisteredClient c, Server s); //when the connection breaks;
 	}
 
 	public Server(Socket accept) throws IOException {
@@ -89,11 +90,24 @@ public class Server {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				
+				endConnection();
 				break;
 			}
 			
 		}
+	}
+
+
+
+	private void endConnection() {
+		if(tcpConnexion == null) return;
+		try {
+			tcpConnexion.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		listener.offClient(client, this);
 	}
 
 
@@ -106,6 +120,7 @@ public class Server {
 			// TODO Auto-generated catch block
 //			tcpConnexion.
 			e.printStackTrace();
+			endConnection();
 		}
 	}
 }
