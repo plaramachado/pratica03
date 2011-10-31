@@ -16,11 +16,40 @@ public class MasterServer {
 	ClientListener lis = new ClientListener() {
 		
 		@Override
-		public void getClient(RegisteredClient c) {
-			
+		public boolean getClient(RegisteredClient c) {
+			for (int i = 0; i < clients.size(); i++) {
+				RegisteredClient registeredClient = clients.get(i);
+				if(registeredClient.sameName(c)){
+					if(registeredClient.samePass(c)){
+						if(registeredClient.isOnline()) return false; //he's already online
+						registeredClient.setOnline(true);
+						updateClients();
+						return true; //correct password
+					} else{
+						return false; //wrong password
+					}
+				}
+			}
+			clients.add(c); //registers client, wasn't before
+			c.setOnline(true);
+			updateClients();
+			return true; //registered
 		}
+
 	};
 	
+	private void updateClients() {
+		String clientsMessage = "CLIENTS \r\n";
+		for (int i = 0; i < clients.size(); i++) {
+			RegisteredClient registeredClient = clients.get(i);
+			if(!registeredClient.isOnline()) continue; //if the client isn't online, skip
+			clientsMessage += registeredClient.getUserName() + "\r\n";
+		}
+		clientsMessage += "\r\n";
+		for (int i = 0; i < servers.size(); i++) {
+			servers.get(i).sendMessage(clientsMessage);
+		}
+	}
 	
 	public static void main(String[] args) throws IOException{
 		new MasterServer().listen();
@@ -37,14 +66,7 @@ public class MasterServer {
 					try {
 						server = new Server(accept);
 						servers.add(server);
-						server.setListener(new ClientListener() {
-							
-							@Override
-							public void getClient(RegisteredClient c) {
-								// TODO Auto-generated method stub
-								
-							}
-						});
+						server.setListener(lis);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
