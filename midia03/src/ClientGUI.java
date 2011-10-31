@@ -1,10 +1,12 @@
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.ScrollPane;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,9 +17,13 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 
 
 public class ClientGUI extends JFrame{
@@ -38,9 +44,12 @@ public class ClientGUI extends JFrame{
 	private JTextArea messageTextArea;
 	private JTextArea chatTextArea;
 	
+	// Lists
+	private JList contactsList;
+	
 	public static void main(String[] args) {
 		ClientGUI c = new ClientGUI();
-		c.setSize(new Dimension(400, 400));
+		c.setSize(new Dimension(500, 500));
 		c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		c.setVisible(true);
 	}
@@ -92,7 +101,12 @@ public class ClientGUI extends JFrame{
 	public JPanel getContactsPanel() {
 		if(contactsPanel != null) return contactsPanel;
 		
+		JScrollPane scroller = new JScrollPane(this.getContactsList());
+		scroller.setMinimumSize(new Dimension(130, 300));
+		
 		contactsPanel = new JPanel();
+		contactsPanel.setLayout(new GridLayout(1,1));
+		contactsPanel.add(scroller);
 		return contactsPanel;
 	}
 	
@@ -133,15 +147,18 @@ public class ClientGUI extends JFrame{
 		pane.setMinimumSize(new Dimension(400, 300));
 		
 		c.weighty = 0.9;
+		c.weightx = 1;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
+		c.insets = new Insets(0, 0, 10, 10);
 		chatPanel.add(pane, c);
 		
 		pane = new JScrollPane(this.getMessageTextArea());
 		pane.setMinimumSize(new Dimension(400, 70));
 		
 		c.weighty = 0.1;
+		c.weightx = 1;
 		c.gridx = 0;
 		c.gridy = 10;
 		c.fill = GridBagConstraints.BOTH;
@@ -180,14 +197,20 @@ public class ClientGUI extends JFrame{
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 0;
 		mainPanel.add(this.getMenuPanel(), c);
 		
 		c.weightx = 0.65;
+		c.gridx = 1;
+		c.gridy = 0;
 		//c.fill = GridBagConstraints.HORIZONTAL;
 		c.fill = GridBagConstraints.BOTH;
 		//c.gridwidth = 5;
 		mainPanel.add(this.getChatPanel(), c);
 		
+		c.gridx = 2;
+		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.25;
 		mainPanel.add(this.getContactsPanel(), c);
@@ -196,12 +219,35 @@ public class ClientGUI extends JFrame{
 		
 	}
 	
-	
-	
-	
-	
-	
-	
+	public JList getContactsList() {
+		if(contactsList != null) return contactsList;
+		Object[] data = new Object[4];
+		data[0] = "Felipe";
+		data[1] = "Pedro";
+		data[2] = "Sainte";
+		data[3] = "Vanessa";
+		
+		
+		contactsList = new JList(data);
+		contactsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		contactsList.setLayoutOrientation(JList.VERTICAL_WRAP);
+		contactsList.setVisibleRowCount(-1);
+		
+		// Render the list with icon
+		contactsList.setCellRenderer(new ListCellRenderer() {
+			
+			@Override
+			public Component getListCellRendererComponent(JList list, Object value,
+					int index, boolean isSelected, boolean cellHasFocus) {
+				// TODO Auto-generated method stub
+				
+				return new JLabel( value.toString() , createImageIcon("resources/icons/online2.jpg"), JLabel.LEFT);
+			}
+		});
+		
+		return contactsList;
+	}
+
 	protected ImageIcon createImageIcon(String path) {
 //		java.net.URL imgURL = getClass().getResource(path);
 //		if (imgURL != null) {
