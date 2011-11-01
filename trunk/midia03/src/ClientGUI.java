@@ -8,17 +8,21 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.ScrollPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -33,6 +37,8 @@ public class ClientGUI extends JFrame{
 	private JButton playVideoButton;
 	private JButton pauseVideoButton;
 	private JButton quitButton;
+	private JButton callButton;
+	private JButton endCallButton;
 	
 	// Panels
 	private JPanel contactsPanel;
@@ -98,6 +104,25 @@ public class ClientGUI extends JFrame{
 		quitButton.setIcon(createImageIcon("resources/icons/system-shutdown-panel-restart.png"));
 		return quitButton;
 	}
+	public JButton getCallButton() {
+		if(callButton != null) return callButton;
+		
+		callButton = new JButton();
+		callButton.setIcon(createImageIcon("resources/icons/call-start.png"));
+		callButton.setToolTipText("Call selected");
+		callButton.addActionListener(new CallButtonListener(this));
+		return callButton;
+	}
+
+	public JButton getEndCallButton() {
+		if(endCallButton != null) return endCallButton;
+		
+		endCallButton = new JButton();
+		endCallButton.setIcon(createImageIcon("resources/icons/call-stop.png"));
+		endCallButton.setToolTipText("End call");
+		return endCallButton;
+	}
+
 	public JPanel getContactsPanel() {
 		if(contactsPanel != null) return contactsPanel;
 		
@@ -105,8 +130,18 @@ public class ClientGUI extends JFrame{
 		scroller.setMinimumSize(new Dimension(130, 300));
 		
 		contactsPanel = new JPanel();
-		contactsPanel.setLayout(new GridLayout(1,1));
-		contactsPanel.add(scroller);
+		GridBagConstraints c = new GridBagConstraints();
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		contactsPanel.setLayout(new GridBagLayout());
+		contactsPanel.add(scroller, c);
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		c.insets = new Insets(10, 0, 0, 0);
+		contactsPanel.add(this.getCallButton(), c);
+		
 		return contactsPanel;
 	}
 	
@@ -235,13 +270,17 @@ public class ClientGUI extends JFrame{
 		
 		// Render the list with icon
 		contactsList.setCellRenderer(new ListCellRenderer() {
-			
+			private DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value,
 					int index, boolean isSelected, boolean cellHasFocus) {
 				// TODO Auto-generated method stub
-				
-				return new JLabel( value.toString() , createImageIcon("resources/icons/online2.jpg"), JLabel.LEFT);
+				JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index,
+				        isSelected, cellHasFocus);
+				renderer.setIcon(createImageIcon("resources/icons/online2.jpg"));
+				//renderer.setVerticalTextPosition(JLabel.RIGHT);
+				return renderer;
+				//return new JLabel( value.toString() , , JLabel.LEFT);
 			}
 		});
 		
@@ -273,4 +312,30 @@ public class ClientGUI extends JFrame{
 	
 	
 
+}
+
+
+// Exemplos de listeners
+class CallButtonListener implements ActionListener{
+	private ClientGUI c;
+	public CallButtonListener(ClientGUI c){
+		this.c = c;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JList l = c.getContactsList();
+		int[] i = l.getSelectedIndices();
+		Object[] v = l.getSelectedValues();
+		String s = "";
+		
+		for(int k=0; k<v.length; k++){
+			s +=  v[k].toString() + ", ";
+		}
+		
+		JOptionPane.showConfirmDialog(null, "Calling " + s );
+		
+		
+	}
+	
 }
