@@ -6,8 +6,10 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import server.MasterServer;
+import server.Server;
 
 
 /**
@@ -23,6 +25,9 @@ import server.MasterServer;
  * 
  * If you go offline (the socket throws an exception) then you should call StartConnection() to register again
  * You may also change Username and Password if you wish.
+ * 
+ * CALL SETUP CONTINUATION
+ * 
  */
 public class Client {
 	private static final int serverPort = MasterServer.serverPort;
@@ -37,12 +42,29 @@ public class Client {
 	private int port;
 	private Socket serverSocket;
 	private ClientListener listener;
+	private PeerListener p2plistener;
 	
 	private boolean waitingForOnlineConfirm;
+	private boolean waitingForCall;
+	
+	public static interface PeerListener{
+		public void gotP2P(String ip, int port);
+	}
 	
 	public static interface ClientListener{
 		public void changeStateOnline(boolean state); //the state represents online(true), offline(false)
+		public void registerError(); //called when you try to register and an error occurs
 		public void newClientList(ArrayList<String> clients); //when the list of clients change
+		public void incomingCall(String caller); //an INVITE has been received from the especified caller
+			//handle incomingCall and then call either acceptCall() or declineCall()
+		public void updateCallStatus(String status); //for monitoring the call status
+		public void callFailedNotFound();
+		public void callFailedDecline();
+		public void callCompleted();
+	}
+	
+	public void setP2plistener(PeerListener p2plistener) {
+		this.p2plistener = p2plistener;
 	}
 
 	public void setUserName(String userName) {
@@ -95,11 +117,57 @@ public class Client {
 				done = true;
 				e.printStackTrace();
 			}
-			System.out.println(readLine.trim());
+			if(waitingForCall){
+				if(readLine.contains("100") || readLine.contains("101") || readLine.contains("180")){
+					if(listener != null) listener.updateCallStatus(readLine);
+				}
+				if(readLine.contains("404")){
+					waitingForCall = false;
+					if(listener != null) listener.callFailedNotFound();
+				}
+				if(readLine.contains("603")){
+					waitingForCall = false;
+					if(listener != null) listener.callFailedDecline();
+				}
+				if(readLine.contains("200")){ //get call stuff here.
+					try {
+						waitingForCall = false;
+						readLine = bufferedReader.readLine();
+						StringTokenizer tokens = new StringTokenizer(readLine);
+						tokens.nextToken(); //skips Destination-address:
+						String ip = tokens.nextToken(); //gets IP
+						readLine = bufferedReader.readLine();
+						tokens = new StringTokenizer(readLine);
+						tokens.nextToken(); //skips Destination-port:
+						String port = tokens.nextToken(); //gets port
+						if(p2plistener != null) p2plistener.gotP2P(ip, Integer.parseInt(port));
+						if(listener != null) listener.callCompleted();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+//			System.out.println("|"+readLine.trim()+"|");
+			if(readLine.trim().contains("INVITE")){
+				StringTokenizer tokens = new StringTokenizer(readLine);
+				tokens.nextToken(); //skips INVITE
+				String caller = tokens.nextToken(); //gets the id of the caller
+				if(listener != null) listener.incomingCall(caller);
+			}
+			if(readLine.trim().equals("401")){ //error
+				if(waitingForOnlineConfirm){
+					if(listener != null) listener.registerError();
+					System.out.println("Register Error!");
+					waitingForOnlineConfirm = false;
+				}
+			}
 			if(readLine.trim().equals("200 OK")){
 				if(waitingForOnlineConfirm){
 					if(listener != null) listener.changeStateOnline(true);
 					System.out.println("I'm Online!");
+					waitingForOnlineConfirm = false;
 				}
 			}
 			if(readLine.trim().equals("CLIENTS")){
@@ -141,18 +209,34 @@ public class Client {
 	}
 
 	public void register() {
+		StringBuffer s = new StringBuffer("");
+		s.append("REGISTER " + userName + "\r\n");
+		s.append("password = " + password + "\r\n");
+		s.append("port = " + port + "\r\n");
+		sendMessage(s.toString());
+	}
+	
+	/**
+	 * Method used to call another client. The string client is the name of the client you're calling
+	 * @param client
+	 */
+	public void call(String client) {
+		StringBuffer s = new StringBuffer("");
+		s.append("CALL " + client + " \r\n");
+		waitingForCall = true;
+		sendMessage(s.toString());
+	}
+
+	private void sendMessage(String message) {
 		try {
 			waitingForOnlineConfirm = true;
-			bufferedWriter.append("REGISTER " + userName + "\r\n");
-			bufferedWriter.append("password = " + password + "\r\n");
-			bufferedWriter.append("port = " + port + "\r\n");
+			bufferedWriter.append(message);
 			bufferedWriter.flush();
 		} catch (IOException e) {
 			connectionDies();
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	private void connectionDies() {
@@ -164,6 +248,17 @@ public class Client {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
+	}
+	
+	/**
+	 * Called when you want to accept a call
+	 */
+	public void acceptCall(){
+		sendMessage(Server.SIMPLEOK);
+	}
+	
+	public void refuseCall(){
+		sendMessage(Server.DECLINE);
 	}
 }
 
