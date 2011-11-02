@@ -11,17 +11,30 @@ import java.util.StringTokenizer;
 
 
 public class Server {
-	
+
+	public static final String DECLINE = "603 decline \r\n";
+	public static final String SIMPLEOK = "200 OK \r\n\r\n";
 	private BufferedReader bufferedReader;
 	private BufferedWriter bufferedWriter;
 	private Socket tcpConnexion;
 	private RegisteredClient client; //data for the client of this connection
 	ServerListener listener;
-	
+	MasterServer master;
+	private boolean waitingForInviteConfirm;
+	private String lastCaller = "";
+
+	public RegisteredClient getClient() {
+		return client;
+	}
+
+	public void setMaster(MasterServer master) {
+		this.master = master;
+	}
+
 	public void setListener(ServerListener listener) {
 		this.listener = listener;
 	}
-	
+
 	/**
 	 * Called when a client registers, in a instance of server.
 	 * Used by the MasterServer to keep track of things and register the client, also check
@@ -40,7 +53,7 @@ public class Server {
 		tcpConnexion = accept;
 	}
 
-	
+
 
 	public void acceptRequests(){
 		boolean done = false;
@@ -52,6 +65,27 @@ public class Server {
 				System.out.println(newLine);
 				StringTokenizer tokens = new StringTokenizer(newLine);
 				String request = tokens.nextToken();
+				if(waitingForInviteConfirm){
+					if(newLine.trim().equals("200 OK")){
+						waitingForInviteConfirm = false;
+						master.confirmInvite(lastCaller, client.getIp(), client.getPortForClient());
+					}
+					if(newLine.trim().equals("603 decline")){
+						master.declineInvite(lastCaller);
+					}
+				}
+				if(request.equals("CALL")){
+					sendMessage("100 trying \r\n");
+					String destination = tokens.nextToken();
+					boolean online = master.clientOnline(destination.trim());
+					if(online){
+						sendMessage("101 found \r\n");
+						master.sendInvite(destination.trim(), client.getUserName());
+						sendMessage("180 ringing \r\n");
+					} else{
+						sendMessage("404 not found \r\n");
+					}
+				}
 				if(request.equals("REGISTER")){
 					String name = tokens.nextToken();
 					newLine = bufferedReader.readLine(); //password = *****
@@ -79,13 +113,13 @@ public class Server {
 					client.setPortForServer(Integer.parseInt(portForServer));
 					client.setUserName(name);
 					boolean registered = listener.getClient(client);
-					if(registered) sendMessage("200 OK \r\n\r\n");
+					if(registered) sendMessage(SIMPLEOK);
 					if(!registered) sendMessage("401 \r\n");
-					
-//					System.out.printf(remoteSocketAddress.toString());
-					
-					
-					
+
+					//					System.out.printf(remoteSocketAddress.toString());
+
+
+
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -93,7 +127,7 @@ public class Server {
 				endConnection();
 				break;
 			}
-			
+
 		}
 	}
 
@@ -118,9 +152,27 @@ public class Server {
 			bufferedWriter.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-//			tcpConnexion.
+			//			tcpConnexion.
 			e.printStackTrace();
 			endConnection();
 		}
+	}
+
+	public void sendInvite(String caller) {
+		waitingForInviteConfirm = true;
+		lastCaller  = caller; //so you can reply to it later
+		String message = "INVITE " + caller+ " \r\n";
+		sendMessage(message);
+	}
+
+	public void declineInvite() {
+		sendMessage(DECLINE);
+	}
+
+	public void confirmInvite(String ip, int portForClient) {
+		String s = "200 OK \r\n";
+		s += "Destination-address: "+ip+"\r\n";
+		s += "Destination-port: "+portForClient+"\r\n\r\n";
+		sendMessage(s);
 	}
 }
