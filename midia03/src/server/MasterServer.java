@@ -8,13 +8,13 @@ import server.Server.ServerListener;
 
 
 public class MasterServer {
-	
+
 	public static final int serverPort = 2000;
-	
+
 	ArrayList<Server> servers = new ArrayList<Server>();
 	ArrayList<RegisteredClient> clients = new ArrayList<RegisteredClient>();
 	ServerListener lis = new ServerListener() {
-		
+
 		@Override
 		public boolean getClient(RegisteredClient c) {
 			for (int i = 0; i < clients.size(); i++) {
@@ -24,11 +24,11 @@ public class MasterServer {
 						if(registeredClient.isOnline()){
 							System.out.println("Already Online");
 							return false; //he's already online
-							
+
 						}
 						c.setOnline(true);
 						clients.set(i, c);
-						
+
 						updateClients();
 						return true; //correct password
 					} else{
@@ -51,7 +51,7 @@ public class MasterServer {
 		}
 
 	};
-	
+
 	private void updateClients() {
 		String clientsMessage = "CLIENTS \r\n";
 		for (int i = 0; i < clients.size(); i++) {
@@ -64,7 +64,7 @@ public class MasterServer {
 			servers.get(i).sendMessage(clientsMessage);
 		}
 	}
-	
+
 	public static void main(String[] args) throws IOException{
 		new MasterServer().listen();
 	}
@@ -79,6 +79,7 @@ public class MasterServer {
 					Server server = null;
 					try {
 						server = new Server(accept);
+						server.setMaster(MasterServer.this);
 						servers.add(server);
 						server.setListener(lis);
 					} catch (IOException e) {
@@ -89,7 +90,55 @@ public class MasterServer {
 					server.acceptRequests();
 				};
 			}.start();
-			
+
 		}
+	}
+
+	/**
+	 * 
+	 * @param client
+	 * @param message
+	 * @return returns false if the client isn't registered or is offline
+	 */
+	public boolean sendInvite(String client, String caller) {
+		boolean clientFound =  false;
+		for (int i = 0; i < servers.size(); i++) {
+			RegisteredClient client2 = servers.get(i).getClient();
+			if(client2 != null) clientFound = client2.getUserName().equals(client);
+			if(clientFound){ 
+				servers.get(i).sendInvite(caller);
+				return true;
+			}
+			//			servers.get(i).getClient()
+		}
+		return false;
+	}
+
+	public boolean clientOnline(String client) {
+		for (int i = 0; i < clients.size(); i++) {
+			if( clients.get(i).getUserName().equals(client)) return clients.get(i).isOnline();
+		}
+		return false;
+	}
+
+	public void confirmInvite(String lastCaller, String ip, int portForClient) {
+		Server s = findServer(lastCaller);
+		if(s != null) s.confirmInvite(ip, portForClient);
+	}
+
+	private Server findServer(String lastCaller) {
+		boolean clientFound = false;
+		for (int i = 0; i < servers.size(); i++) {
+			RegisteredClient client2 = servers.get(i).getClient();
+			
+			if(client2 != null) clientFound = client2.getUserName().equals(lastCaller);
+			if(clientFound) return servers.get(i);
+		}
+		return null;
+	}
+
+	public void declineInvite(String lastCaller) {
+		Server findServer = findServer(lastCaller);
+		if(findServer != null) findServer.declineInvite();
 	}
 }
