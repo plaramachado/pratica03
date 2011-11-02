@@ -1,3 +1,4 @@
+package draft;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,6 +21,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -28,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 
 
 public class ClientGUI extends JFrame{
@@ -64,6 +67,17 @@ public class ClientGUI extends JFrame{
 		this.getContentPane().setLayout(new GridLayout(1,1));
 		
 		this.getContentPane().add(this.getMainPanel());
+		
+		//Tenta alterar o look and feel
+		try {
+		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		    
+		} catch (Exception e) {
+			System.out.println("Coudnt change look and fell");
+			
+		    //e.printStackTrace();
+		}
+		
 		this.pack();
 	}
 	
@@ -313,6 +327,18 @@ public class ClientGUI extends JFrame{
 	
 
 }
+
+
+
+// A classe que implementa o frame para as conversas
+class ChatFrame extends JInternalFrame{
+	private JPanel mainPanel;
+	
+	public ChatFrame(String title){
+		super(title);
+	}
+}
+
 
 
 // Exemplos de listeners
