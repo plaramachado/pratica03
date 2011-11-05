@@ -1,4 +1,4 @@
-package view;
+package client.view;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -13,9 +13,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/**
+ * Class for the password dialog.
+ * 
+ * */
 public class LoginDialog extends JDialog{
 	private JPanel content;
 	private JTextField loginField;
@@ -87,9 +92,8 @@ public class LoginDialog extends JDialog{
 	public JTextField getPwdField() {
 		if(pwdField != null) return pwdField;
 		
-		pwdField = new JTextField();
+		pwdField = new JPasswordField();
 		pwdField.setColumns(20);
-		
 		
 		return pwdField;
 	}

@@ -1,13 +1,19 @@
-package view;
+package client.view;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
+
+import client.Client;
 
 
 public class ClientFrame extends BaseClientFrame{
 	
+	private Client client;
 
 	/**
 	 * Initializes interface and set event listeners
@@ -17,6 +23,20 @@ public class ClientFrame extends BaseClientFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
+		
+		try {
+			this.client = new Client();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public Client getClient(){
+		return this.client;
 	}
 	
 	public static void main(String[] args){
@@ -33,17 +53,17 @@ public class ClientFrame extends BaseClientFrame{
 // TODO - Maybe move to separate source files
 
 abstract class BaseListener implements ActionListener{
-	private BaseClientFrame frame;
-	public BaseListener(BaseClientFrame frame){
+	private ClientFrame frame;
+	public BaseListener(ClientFrame frame){
 		this.setFrame(frame);
 	}
 	public BaseListener(){
 		
 	}
-	public void setFrame(BaseClientFrame frame) {
+	public void setFrame(ClientFrame frame) {
 		this.frame = frame;
 	}
-	public BaseClientFrame getFrame() {
+	public ClientFrame getFrame() {
 		return frame;
 	}
 }
@@ -51,7 +71,7 @@ abstract class BaseListener implements ActionListener{
 
 class RegisterButtonListener extends BaseListener{
 
-	public RegisterButtonListener(BaseClientFrame c){
+	public RegisterButtonListener(ClientFrame c){
 		super(c);
 	}
 	@Override
@@ -69,9 +89,22 @@ class RegisterButtonListener extends BaseListener{
 
 class RegisterListener extends BaseListener{
 
-	@Override
+	/**
+	 * Fired when the user clicks in the 'OK' button 
+	 * in the login frame.  
+	 * */	
 	public void actionPerformed(ActionEvent e) {
-		// Register in the server
+		
+		Client c = this.getFrame().getClient();
+		
+		// Fasten seat belt. Doing risky things here.
+		Component tf = (Component)(e.getSource());
+		LoginDialog l = (LoginDialog)tf.getParent();
+		
+		c.setUserName(l.getLoginField().getText());
+		c.setPassword(l.getPwdField().getText());
+		
+		c.register();
 		
 		
 	}
