@@ -11,9 +11,12 @@ import javax.swing.JFrame;
 import client.Client;
 
 
+
+
 public class ClientFrame extends BaseClientFrame{
 	
 	private Client client;
+	
 
 	/**
 	 * Initializes interface and set event listeners
