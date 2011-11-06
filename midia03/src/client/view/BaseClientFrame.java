@@ -56,7 +56,7 @@ public class BaseClientFrame extends JFrame{
 	private JTextArea chatTextArea;
 	
 	// Lists
-	private JList contactsList;
+	private MutableList contactsList;
 	
 	// Internal frames
 	private java.util.List<JInternalFrame> chatFrames;
@@ -274,7 +274,7 @@ public class BaseClientFrame extends JFrame{
 		
 	}
 	
-	public JList getContactsList() {
+	public MutableList getContactsList() {
 		if(contactsList != null) return contactsList;
 		Object[] data = new Object[4];
 		data[0] = "Felipe";
@@ -283,7 +283,7 @@ public class BaseClientFrame extends JFrame{
 		data[3] = "Vanessa";
 		
 		
-		contactsList = new JList(data);
+		contactsList = new MutableList();//(data);
 		contactsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		contactsList.setLayoutOrientation(JList.VERTICAL_WRAP);
 		contactsList.setVisibleRowCount(-1);

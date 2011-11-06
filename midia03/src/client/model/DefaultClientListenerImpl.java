@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import client.Client.ClientListener;
 import client.view.ClientFrame;
+import client.view.*;
 
 public class DefaultClientListenerImpl implements ClientListener {
 	
@@ -30,12 +31,22 @@ public class DefaultClientListenerImpl implements ClientListener {
 
 	@Override
 	public void newClientList(ArrayList<String> clients) {
+		MutableList l = this.frame.getContactsList();
+		
+		l.getContents().removeAllElements();
+		for(int i = 0; i<clients.size(); i++){
+			l.getContents().addElement(clients.get(i));
+		}
+		this.frame.pack();
+		this.frame.repaint();
+		// TODO forçar o redesenho da janela, o model atualiza mas a view não
+		
 	}
 
 	@Override
 	public void incomingCall(String caller) {
-		// TODO Auto-generated method stub
-
+		// TODO Tratar a conexão que chegou
+		JOptionPane.showMessageDialog(this.frame, "Accept call from " + caller + "?");
 	}
 
 	@Override
