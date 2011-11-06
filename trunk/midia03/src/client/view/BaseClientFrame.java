@@ -1,25 +1,21 @@
 package client.view;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.util.List;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -83,7 +79,7 @@ public class BaseClientFrame extends JFrame{
 		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
 		    
 		} catch (Exception e) {
-			System.out.println("Coudnt change look and fell");
+			System.out.println("Coudnt change look and feel");
 			
 		    //e.printStackTrace();
 		}
@@ -345,19 +341,6 @@ public class BaseClientFrame extends JFrame{
 	
 
 }
-
-
-
-// A classe que implementa o frame para as conversas
-class ChatFrame extends JInternalFrame{
-	private JPanel mainPanel;
-	
-	public ChatFrame(String title){
-		super(title);
-	}
-}
-
-
 
 // Exemplos de listeners
 class BaseCallButtonListener implements ActionListener{

@@ -1,6 +1,5 @@
 package client.view;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -10,11 +9,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -27,17 +24,26 @@ public class LoginDialog extends JDialog{
 	private JTextField pwdField;
 	private JButton okButton;
 	private JButton cancelButton;
+	private ClientFrame frame;
 	
-	public LoginDialog(){
+	public LoginDialog(ClientFrame frame){
 		this.setContentPane(this.getContent());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
 		this.setTitle("Enter your credentials");
-		
+		this.setFrame(frame);
+		frame.setLoginDialog(this);
 		//this.setModal(true);
+		
+		// Additional event handlers
+		this.getOkButton().addActionListener(new RegisterListener(frame));
 		
 	}
 
+	public void setFrame(ClientFrame c){
+		this.frame = c;
+	}
+	
 	public JPanel getContent() {
 		if(content != null) return content;
 		
