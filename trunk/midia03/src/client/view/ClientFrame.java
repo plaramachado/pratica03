@@ -67,6 +67,8 @@ public class ClientFrame extends BaseClientFrame{
 		for(int i=0; i<contactList.size(); i++){
 			
 		}
+		//l.repaint();
+		this.pack();
 	}
 
 
