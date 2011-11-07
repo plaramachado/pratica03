@@ -49,9 +49,7 @@ public class Client {
 	private boolean waitingForOnlineConfirm;
 	private boolean waitingForCall;
 	
-	public static interface PeerListener{
-		public void gotP2P(String ip, int port);
-	}
+
 	
 	public static interface ClientListener{
 		public void changeStateOnline(boolean state); //the state represents online(true), offline(false)
@@ -72,7 +70,9 @@ public class Client {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+	public String getUserName(){ 
+		return this.userName;
+	}
 	public void setListener(ClientListener listener) {
 		this.listener = listener;
 	}
@@ -195,20 +195,6 @@ public class Client {
 		}
 	}
 
-	/**
-	 * This main method will not be called regularly, there will be another class that starts up the GUI
-	 * and does something similar to what this method does, filling password, username, calling register
-	 * and other stuff.
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException{
-		Client client = new Client();
-		client.setPassword("aaa");
-		client.setUserName("Shremps2");
-		client.register();
-
-	}
 
 	public void register() {
 		StringBuffer s = new StringBuffer("");
@@ -261,5 +247,9 @@ public class Client {
 	
 	public void refuseCall(){
 		sendMessage(Server.DECLINE);
+	}
+	
+	public void sendText(String pText){
+		
 	}
 }
