@@ -48,6 +48,7 @@ public class Client {
 	
 	private boolean waitingForOnlineConfirm;
 	private boolean waitingForCall;
+	private String lastClient = ""; //the last client called
 	
 
 	
@@ -60,7 +61,7 @@ public class Client {
 		public void updateCallStatus(String status); //for monitoring the call status
 		public void callFailedNotFound();
 		public void callFailedDecline();
-		public void callCompleted();
+		public void callCompleted(String lastClient);
 	}
 	
 	public void setP2plistener(PeerListener p2plistener) {
@@ -143,7 +144,7 @@ public class Client {
 						tokens.nextToken(); //skips Destination-port:
 						String port = tokens.nextToken(); //gets port
 						if(p2plistener != null) p2plistener.gotP2P(ip, Integer.parseInt(port));
-						if(listener != null) listener.callCompleted();
+						if(listener != null) listener.callCompleted(lastClient);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -209,6 +210,7 @@ public class Client {
 	 * @param client
 	 */
 	public void call(String client) {
+		lastClient = client;
 		StringBuffer s = new StringBuffer("");
 		s.append("CALL " + client + " \r\n");
 		waitingForCall = true;
