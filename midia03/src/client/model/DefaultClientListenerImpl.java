@@ -14,7 +14,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 	
 	public DefaultClientListenerImpl(ClientFrame frame){
 		this.frame = frame;
-		System.out.println("Set frame on DefClientListener");
+		//System.out.println("Set frame on DefClientListener");
 	}
 	
 	@Override
@@ -47,7 +47,14 @@ public class DefaultClientListenerImpl implements ClientListener {
 	@Override
 	public void incomingCall(String caller) {
 		// TODO Tratar a conexão que chegou
-		JOptionPane.showMessageDialog(this.frame, "Accept call from " + caller + "?");
+		//JOptionPane.showMessageDialog(this.frame, "Accept call from " + caller + "?");
+		int answer = JOptionPane.showConfirmDialog(this.frame, "Accept call from " + caller + "?", "Incoming call", JOptionPane.YES_NO_OPTION);
+		
+		if(answer == JOptionPane.YES_OPTION){
+			this.frame.getClient().acceptCall();
+		}else{
+			this.frame.getClient().refuseCall();
+		}
 	}
 
 	@Override
