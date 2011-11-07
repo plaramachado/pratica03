@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyVetoException;
 import java.security.Key;
 
 import javax.swing.BorderFactory;
@@ -33,7 +34,16 @@ public class ChatFrame extends JInternalFrame{
 		this.setResizable(true);
 		this.setIconifiable(true);
 		this.setMaximizable(true);
+		this.setClosable(true);
 		this.getContentPane().add(this.getChatPanel());
+		this.getMessageTextArea().addKeyListener(new EnterHitHandler());
+		this.addInternalFrameListener(new CloseHandler());
+//		try {
+//			this.setMaximum(true);
+//		} catch (PropertyVetoException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	public JTextArea getChatTextArea() {

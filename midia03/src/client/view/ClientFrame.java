@@ -1,6 +1,7 @@
 package client.view;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -36,6 +37,8 @@ public class ClientFrame extends BaseClientFrame{
 	public ClientFrame(){
 		super("iChat");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(700, 500);
+		this.setMinimumSize(new Dimension(700, 500));
 		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
 		this.getCallButton().addActionListener(new CallButtonListener(this));

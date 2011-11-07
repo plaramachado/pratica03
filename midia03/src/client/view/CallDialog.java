@@ -7,12 +7,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 public class CallDialog extends JDialog{
 	private JPanel panel;
-	private JLabel label;
+	//private JLabel label;
 	private ClientFrame frame;
 	private JButton okButton;
+	private JTextArea label;
 	
 	public CallDialog(ClientFrame frame) {
 		this.frame = frame;
@@ -36,10 +38,13 @@ public class CallDialog extends JDialog{
 		return panel;
 	}
 
-	public JLabel getLabel() {
+	public JTextArea getLabel() {
 		if(label != null) return label;
 		
-		label = new JLabel();
+		label = new JTextArea();
+		label.setEditable(false);
+		label.setColumns(20);
+		label.setRows(5);
 		
 		return label;
 	}
