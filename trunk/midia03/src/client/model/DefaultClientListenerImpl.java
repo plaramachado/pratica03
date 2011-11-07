@@ -2,10 +2,10 @@ package client.model;
 
 import java.util.ArrayList;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import client.Client.ClientListener;
-import client.view.ClientFrame;
 import client.view.*;
 
 public class DefaultClientListenerImpl implements ClientListener {
@@ -52,6 +52,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 		
 		if(answer == JOptionPane.YES_OPTION){
 			this.frame.getClient().acceptCall();
+			this.frame.createChatFrame(caller);
 		}else{
 			this.frame.getClient().refuseCall();
 		}
@@ -60,10 +61,11 @@ public class DefaultClientListenerImpl implements ClientListener {
 	@Override
 	public void updateCallStatus(String status) {
 		System.out.println("Status:" + status);
-		if( this.frame == null) System.out.println("Frame is null");
-		if( this.frame.getCallDialog() == null) System.out.println("CallDialog is null");
-		if( this.frame.getCallDialog().getLabel() == null) System.out.println("Label is null");
-		this.frame.getCallDialog().getLabel().setText(status + "...");
+		//if( this.frame == null) System.out.println("Frame is null");
+		//if( this.frame.getCallDialog() == null) System.out.println("CallDialog is null");
+		//if( this.frame.getCallDialog().getLabel() == null) System.out.println("Label is null");
+		JLabel l = this.frame.getCallDialog().getLabel();
+		l.setText( l.getText() + "\n" + status + "...");
 
 	}
 
@@ -80,8 +82,10 @@ public class DefaultClientListenerImpl implements ClientListener {
 	}
 
 	@Override
-	public void callCompleted() {
-		// TODO Auto-generated method stub
+	public void callCompleted(String caller) {
+		// TODO Quer dize que é aqui que vai a mágica, seu Silvio?
+		// Adicionar a abertura dos sockets e tal
+		this.frame.createChatFrame(caller);
 
 	}
 
