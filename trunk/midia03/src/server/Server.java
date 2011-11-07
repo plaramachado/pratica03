@@ -60,9 +60,12 @@ public class Server {
 			String newLine = "";
 			try {
 				newLine = bufferedReader.readLine();
-				System.out.println(newLine);
+				while(newLine.trim().isEmpty()) newLine = bufferedReader.readLine(); 
+				System.out.println("server newLine "+newLine);
 				StringTokenizer tokens = new StringTokenizer(newLine);
-				String request = tokens.nextToken();
+				String request = ""; 
+				if(tokens.hasMoreTokens()) request = tokens.nextToken(); //this should not be needed
+				
 				if(waitingForInviteConfirm){
 					if(newLine.trim().equals("200 OK")){
 						waitingForInviteConfirm = false;
