@@ -11,13 +11,16 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -47,9 +50,11 @@ public class BaseClientFrame extends JFrame{
 	
 	// Panels
 	private JPanel contactsPanel;
-	private JPanel chatPanel;
 	private JPanel menuPanel;
 	private JPanel mainPanel;
+	
+	// Desktop panes
+	private JDesktopPane chatPanel;
 	
 	// Textboxes
 	private JTextArea messageTextArea;
@@ -59,11 +64,12 @@ public class BaseClientFrame extends JFrame{
 	private MutableList contactsList;
 	
 	// Internal frames
-	private java.util.List<JInternalFrame> chatFrames;
+	private Map<String, JInternalFrame> chatWindows; // All active chat windows.
 	
 	public static void main(String[] args) {
 		BaseClientFrame c = new BaseClientFrame("iChat");
 		c.setSize(new Dimension(500, 500));
+		c.setMinimumSize(new Dimension(500, 500));
 		c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		c.setVisible(true);
 	}
@@ -73,15 +79,14 @@ public class BaseClientFrame extends JFrame{
 		this.getContentPane().setLayout(new GridLayout(1,1));
 		
 		this.getContentPane().add(this.getMainPanel());
+		this.getChatWindows();
 		
 		//Tenta alterar o look and feel
 		try {
 		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
 		    
 		} catch (Exception e) {
-			System.out.println("Coudnt change look and feel");
-			
-		    //e.printStackTrace();
+			System.out.println("Coudnt change look and feel");			
 		}
 		
 		this.pack();
@@ -165,61 +170,15 @@ public class BaseClientFrame extends JFrame{
 		return contactsPanel;
 	}
 	
-	public JTextArea getMessageTextArea() {
-		if(messageTextArea != null) return messageTextArea;
-		
-		messageTextArea = new JTextArea();
-		messageTextArea.setRows(3);
-		messageTextArea.setColumns(50);
-		messageTextArea.setEnabled(true);
-		messageTextArea.setLineWrap(true);
-		return messageTextArea;
-	}
 	
-	public JTextArea getChatTextArea() {
-		if(chatTextArea != null)return chatTextArea;
-		chatTextArea = new JTextArea();
-		chatTextArea.setEditable(false);
-		chatTextArea.setRows(40);
-		chatTextArea.setColumns(50);
-		chatTextArea.setPreferredSize(new Dimension(400, 400));
-		chatTextArea.setLineWrap(true);
-		return chatTextArea;
-	}
 	
-	public JPanel getChatPanel() {
+	
+	public JDesktopPane getChatPanel() {
 		
 		if(chatPanel != null) return chatPanel;
 		
-		chatPanel = new JPanel();
-		chatPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		//chatPanel.setLayout( null);
+		chatPanel = new JDesktopPane();
 		
-		JScrollPane pane;
-		
-		pane = new JScrollPane(this.getChatTextArea());
-		pane.setMinimumSize(new Dimension(400, 300));
-		
-		c.weighty = 0.9;
-		c.weightx = 1;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.fill = GridBagConstraints.BOTH;
-		c.insets = new Insets(0, 0, 10, 10);
-		chatPanel.add(pane, c);
-		
-		pane = new JScrollPane(this.getMessageTextArea());
-		pane.setMinimumSize(new Dimension(400, 70));
-		
-		c.weighty = 0.1;
-		c.weightx = 1;
-		c.gridx = 0;
-		c.gridy = 10;
-		c.fill = GridBagConstraints.BOTH;
-		chatPanel.add(pane, c);
-		
-		chatPanel.setBorder(BorderFactory.createEtchedBorder());
 		return chatPanel;
 	}
 	public JPanel getMenuPanel() {
@@ -288,35 +247,42 @@ public class BaseClientFrame extends JFrame{
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value,
 					int index, boolean isSelected, boolean cellHasFocus) {
-				// TODO Auto-generated method stub
 				JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index,
 				        isSelected, cellHasFocus);
 				renderer.setIcon(createImageIcon("resources/icons/online2.jpg"));
-				//renderer.setVerticalTextPosition(JLabel.RIGHT);
 				return renderer;
-				//return new JLabel( value.toString() , , JLabel.LEFT);
 			}
 		});
 		
 		return contactsList;
 	}
 	
-	
-	public List<JInternalFrame> getChatFrames(){
-		if(chatFrames != null) return chatFrames;
+
+	public Map<String, JInternalFrame> getChatWindows() {
+		if(chatWindows != null) return chatWindows;
 		
-		chatFrames = new ArrayList<JInternalFrame>();
-		return chatFrames;
+		chatWindows = new HashMap<String, JInternalFrame>();
+		return chatWindows;
+	}
+
+	/**
+	 * Creates a new chat frame. 
+	 * Called when one new conversation is initiated.
+	 * */
+	public void createChatFrame(String caller){
+		// TO DO Considerar possibilidade de ja existir
+		// um frame associado a esta ligação
+		ChatFrame c = new ChatFrame();
+		c.setTitle("Chat with " + caller);
+		c.setVisible(true);
+		c.moveToFront();
+		c.setSize(100, 100);
+		this.chatWindows.put(caller, c  );
+		this.getChatPanel().add(c);
+		this.repaint();
 	}
 
 	protected ImageIcon createImageIcon(String path) {
-//		java.net.URL imgURL = getClass().getResource(path);
-//		if (imgURL != null) {
-//		return new ImageIcon(imgURL, description);
-//		} else {
-//		System.err.println("Couldn't find file: " + path);
-//		return null;
-//		}
 		
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		InputStream input = classLoader.getResourceAsStream(path);

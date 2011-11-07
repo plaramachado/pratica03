@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JList;
 import javax.swing.ListModel;
 
@@ -25,6 +27,7 @@ public class ClientFrame extends BaseClientFrame{
 	private LoginDialog loginDialog;
 	private CallDialog callDialog;
 	private ClientListener clientListener;
+	
 	
 
 	/**
@@ -60,7 +63,7 @@ public class ClientFrame extends BaseClientFrame{
 	
 	public void setCallDialog(CallDialog callDialog) {
 		this.callDialog = callDialog;
-		System.out.println("Setando CallDialog");
+		//System.out.println("Setando CallDialog");
 	}
 
 	public CallDialog getCallDialog() {
@@ -182,7 +185,12 @@ class CallButtonListener extends BaseListener{
 		l.setTitle("Call to " + s);
 		l.setVisible(true);
 		l.pack();
-		
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		c.call(s);
 		
 	}
