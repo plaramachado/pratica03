@@ -276,14 +276,8 @@ public class BaseClientFrame extends JFrame{
 	
 	public MutableList getContactsList() {
 		if(contactsList != null) return contactsList;
-		Object[] data = new Object[4];
-		data[0] = "Felipe";
-		data[1] = "Pedro";
-		data[2] = "Sainte";
-		data[3] = "Vanessa";
 		
-		
-		contactsList = new MutableList();//(data);
+		contactsList = new MutableList();
 		contactsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		contactsList.setLayoutOrientation(JList.VERTICAL_WRAP);
 		contactsList.setVisibleRowCount(-1);
