@@ -14,6 +14,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 	
 	public DefaultClientListenerImpl(ClientFrame frame){
 		this.frame = frame;
+		System.out.println("Set frame on DefClientListener");
 	}
 	
 	@Override
@@ -51,19 +52,23 @@ public class DefaultClientListenerImpl implements ClientListener {
 
 	@Override
 	public void updateCallStatus(String status) {
-		// TODO Auto-generated method stub
+		System.out.println("Status:" + status);
+		if( this.frame == null) System.out.println("Frame is null");
+		if( this.frame.getCallDialog() == null) System.out.println("CallDialog is null");
+		if( this.frame.getCallDialog().getLabel() == null) System.out.println("Label is null");
+		this.frame.getCallDialog().getLabel().setText(status + "...");
 
 	}
 
 	@Override
 	public void callFailedNotFound() {
-		// TODO Auto-generated method stub
+		this.frame.getCallDialog().getLabel().setText("Call failed. User not found");
 
 	}
 
 	@Override
 	public void callFailedDecline() {
-		// TODO Auto-generated method stub
+		this.frame.getCallDialog().getLabel().setText("User rejected call");
 
 	}
 

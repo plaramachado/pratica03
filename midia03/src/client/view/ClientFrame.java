@@ -23,8 +23,8 @@ public class ClientFrame extends BaseClientFrame{
 	
 	private Client client;
 	private LoginDialog loginDialog;
+	private CallDialog callDialog;
 	private ClientListener clientListener;
-	
 	
 
 	/**
@@ -58,6 +58,15 @@ public class ClientFrame extends BaseClientFrame{
 		return loginDialog;
 	}
 	
+	public void setCallDialog(CallDialog callDialog) {
+		this.callDialog = callDialog;
+		System.out.println("Setando CallDialog");
+	}
+
+	public CallDialog getCallDialog() {
+		return callDialog;
+	}
+
 	public void updateContactList(ArrayList<String> contactList){
 		JList l = this.getContactsList();
 		l.removeAll();
@@ -118,7 +127,7 @@ class RegisterButtonListener extends BaseListener{
 		LoginDialog l = new LoginDialog(this.getFrame());
 		l.setLocationRelativeTo(this.getFrame());
 		l.pack();
-		System.out.println("Event fired");
+		//System.out.println("Event fired");
 		
 	}
 	
@@ -164,6 +173,16 @@ class CallButtonListener extends BaseListener{
 	public void actionPerformed(ActionEvent arg0) {
 		String s = this.getFrame().getContactsList().getSelectedValue().toString();
 		Client c = this.getFrame().getClient();
+		
+		
+		CallDialog l = new CallDialog(this.getFrame());
+		this.getFrame().setCallDialog(l);
+		l.setLocationRelativeTo(this.getFrame());
+		l.getLabel().setText("Calling " + s);
+		l.setTitle("Call to " + s);
+		l.setVisible(true);
+		l.pack();
+		
 		c.call(s);
 		
 	}
