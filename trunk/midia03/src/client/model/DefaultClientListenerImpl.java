@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 import client.Client.ClientListener;
 import client.view.*;
@@ -64,7 +65,8 @@ public class DefaultClientListenerImpl implements ClientListener {
 		//if( this.frame == null) System.out.println("Frame is null");
 		//if( this.frame.getCallDialog() == null) System.out.println("CallDialog is null");
 		//if( this.frame.getCallDialog().getLabel() == null) System.out.println("Label is null");
-		JLabel l = this.frame.getCallDialog().getLabel();
+		JTextArea l = this.frame.getCallDialog().getLabel();
+		
 		l.setText( l.getText() + "\n" + status + "...");
 
 	}
@@ -86,6 +88,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 		// TODO Quer dize que é aqui que vai a mágica, seu Silvio?
 		// Adicionar a abertura dos sockets e tal
 		this.frame.createChatFrame(caller);
+		this.frame.getCallDialog().dispose();
 
 	}
 
