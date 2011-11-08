@@ -76,7 +76,7 @@ public class BaseClientFrame extends JFrame{
 	
 	public BaseClientFrame(String title){
 		super(title);
-		this.getContentPane().setLayout(new GridLayout(1,1));
+		//this.setLayout(new GridLayout(1,1));
 		
 		this.getContentPane().add(this.getMainPanel());
 		this.getChatWindows();
@@ -88,6 +88,7 @@ public class BaseClientFrame extends JFrame{
 		} catch (Exception e) {
 			System.out.println("Coudnt change look and feel");			
 		}
+		
 		
 		this.pack();
 	}

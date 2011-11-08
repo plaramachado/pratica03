@@ -47,6 +47,10 @@ public class ServerFrame extends JFrame{
 	public void setListener(MasterListener listener) {
 		this.listener = listener;
 	}
+	
+	public JTable getClientList(){
+		return clientList;
+	}
 
 	public MasterListener getListener() {
 		if(listener != null) return listener;
@@ -64,10 +68,16 @@ public class ServerFrame extends JFrame{
 				for(int i = 0; i<dataVector.length; i++){
 					data[i][0] = dataVector[i].getUserName();
 					data[i][1] = dataVector[i].getIp();
+					
+					System.out.println(data[i][0]);
+					System.out.println(data[i][1]);
+					
 				}
 				
 				String[] columnIdentifiers = new String[]{"Login", "IP Address"};
 				m.setDataVector(data, columnIdentifiers);
+				getClientList().setModel(m);
+				pack();
 			}
 		};
 		
