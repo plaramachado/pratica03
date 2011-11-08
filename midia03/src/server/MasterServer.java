@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import server.Server.ServerListener;
+import server.view.ServerFrame;
 
 
 public class MasterServer {
@@ -72,7 +73,12 @@ public class MasterServer {
 	}
 
 	public static void main(String[] args) throws IOException{
-		new MasterServer().listen();
+		MasterServer m = new MasterServer();
+		ServerFrame s = new ServerFrame();
+		m.setListener(s.getListener());
+		m.listen();
+		
+		
 	}
 
 	private void listen() throws IOException {
