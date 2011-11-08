@@ -11,8 +11,8 @@ public class Main {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws Exception{
-		pedro();
-	//	tiago();
+	//	pedro();
+		tiago();
 //		Thread.sleep(1000);
 //		tiago.call(pedro.getUserName());
 		
@@ -21,7 +21,7 @@ public class Main {
 		Client tiago = createClient("tiago", "123");
 		P2P tiagop2p = new P2P();
 		tiagop2p.start();
-		tiagop2p.gotP2P("localhost", 5052,5054);
+		tiagop2p.gotP2P("localhost", 5052,5054,5056); //ip do outro cliente
 		System.out.println("fui!");
 		tiagop2p.receiveVideo();
 		System.out.println("receiving");
@@ -32,9 +32,9 @@ public class Main {
 		Client pedro = createClient("pedro", "123");
 		P2P pedrop2p = new P2P();
 		pedrop2p.start();
-		pedrop2p.gotP2P("localhost", 5054,5052);
+		pedrop2p.gotP2P("localhost", 5054,5052,5058); //ip do outro cliente
 		pedrop2p.sendVideo();
-		//Thread.sleep(20000);
+		Thread.sleep(20000);
 		pedrop2p.receiveVideo();
 		
 	}

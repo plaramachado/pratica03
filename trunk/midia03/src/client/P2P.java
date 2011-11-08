@@ -7,19 +7,26 @@ import video.Server;
 
 public class P2P extends Thread implements PeerListener{
 	private String ip;
-	private int receiveVideoPort;
-	private int sendVideoPort;
+	
+	private int receiveRTSPPort;
+	private int sendRTSPPort;
+	
+	private int RTPPort;
+
 	public void receiveText(String pText){
 		
 	}
 	public void sendText(String pText){
 		
 	}
-	public void gotP2P(String ip, int receiveVideoPort, int sendVideoPort) {
+	public void gotP2P(String ip, int receiveRTSPPort, int sendRTSPPort, int RTPPort) {
 
 		this.ip = ip;
-		this.receiveVideoPort = receiveVideoPort;
-		this.sendVideoPort = sendVideoPort;
+		this.receiveRTSPPort = receiveRTSPPort;
+		this.sendRTSPPort = sendRTSPPort;
+		
+		this.RTPPort = RTPPort;
+
 	}
 	public void requestVideo(){ //request TO SEND a video
 		//if ok, call sendVideo()
@@ -32,7 +39,8 @@ public class P2P extends Thread implements PeerListener{
 			public void run() {
 				video.Client client = new video.Client();
 				client.setIp(ip);
-				client.setPort(sendVideoPort);
+				client.setRTSPPort(sendRTSPPort);
+				client.setRTPPort(RTPPort);
 				try {
 					client.start(); //nao pode ser start, tem que ser receive
 				} catch (Exception e) {
@@ -49,7 +57,7 @@ public class P2P extends Thread implements PeerListener{
 				int sessionID = 123456;
 				ServerSocket generalSock;
 				try {
-					generalSock = new ServerSocket(receiveVideoPort);
+					generalSock = new ServerSocket(receiveRTSPPort);
 		        System.out.println("Esperando por cliente...");
 		        Server server = new Server();
 		        server.RTSP_ID = sessionID++;
