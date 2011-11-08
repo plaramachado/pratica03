@@ -13,6 +13,7 @@ public class MasterServer {
 
 	ArrayList<Server> servers = new ArrayList<Server>();
 	ArrayList<RegisteredClient> clients = new ArrayList<RegisteredClient>();
+	MasterListener listener;
 	ServerListener lis = new ServerListener() {
 
 		@Override
@@ -51,6 +52,10 @@ public class MasterServer {
 		}
 
 	};
+	
+	public void setListener(MasterListener listener) {
+		this.listener = listener;
+	}
 
 	private void updateClients() {
 		String clientsMessage = "CLIENTS \r\n";
@@ -63,6 +68,7 @@ public class MasterServer {
 		for (int i = 0; i < servers.size(); i++) {
 			servers.get(i).sendMessage(clientsMessage);
 		}
+		if(listener != null) listener.changeClients(clients);
 	}
 
 	public static void main(String[] args) throws IOException{
