@@ -37,13 +37,13 @@ public class Client{
   DatagramPacket rcvdp; //UDP packet received from the server
   DatagramSocket RTPsocket; //socket to be used to send and receive UDP packets
   static int countPort = 4;
-  static int RTP_RCV_PORT = 25000 + countPort++; //port where the client will receive the RTP packets
+  static int RTPPort = (int) (25000 + Math.round(10000*Math.random())); //port where the client will receive the RTP packets
 
   Timer timer; //timer used to receive data from the UDP socket
   byte[] buf; //buffer used to store data received from the server
 
   //RTSP variables
-  //----------------
+  private int RTSPPort;
   //rtsp states
   final static int INIT = 0;
   final static int READY = 1;
@@ -114,12 +114,15 @@ public class Client{
   }
 
   private String ip;
-  private int port;
+
   public void setIp(String pIp){
 	  ip = pIp;
   }
-  public void setPort(int pPort){
-	  port = pPort;
+  public void setRTSPPort(int pPort){
+	  RTSPPort = pPort;
+  }
+  public void setRTPPort(int pPort){
+	  RTPPort = pPort;
   }
   public void start() throws Exception
   {
@@ -131,7 +134,7 @@ public class Client{
     /* ### FIM DA MOD 1.10 */
     //Establish a TCP connection with the server to exchange RTSP messages
     //------------------
-    RTSPsocket = new Socket(ServerIPAddr, port);
+    RTSPsocket = new Socket(ServerIPAddr, RTSPPort);
 
     //Set input and output stream filters:
     RTSPBufferedReader = new BufferedReader(new InputStreamReader(RTSPsocket.getInputStream()) );
@@ -164,7 +167,7 @@ public class Client{
 	    //construct a new DatagramSocket to receive RTP packets from the server, on port RTP_RCV_PORT
               //set TimeOut value of the socket to 5msec.
 	    /* ### MOD 1.1 */ 
-              RTPsocket = new DatagramSocket(RTP_RCV_PORT);
+              RTPsocket = new DatagramSocket(RTPPort);
               RTPsocket.setSoTimeout(5);
 	    /* ### END MOD 1.1 */
 	  }
@@ -409,7 +412,7 @@ public class Client{
 
       //check if request_type is equal to "SETUP" and in this case write the Transport: line advertising to the server the port used to receive the RTP packets RTP_RCV_PORT
       if (request_type.equals("SETUP"))
-          RTSPBufferedWriter.write("Transport: RTP/UDP; client_port= " + RTP_RCV_PORT + CRLF);
+          RTSPBufferedWriter.write("Transport: RTP/UDP; client_port= " + RTPPort + CRLF);
       //otherwise, write the Session line from the RTSPid field
       else 
           RTSPBufferedWriter.write("Session: " + RTSPid + CRLF);
