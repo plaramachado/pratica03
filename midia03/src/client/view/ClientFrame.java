@@ -9,14 +9,19 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JList;
 import javax.swing.ListModel;
 
+import util.ObservableArrayList;
+
 import client.Client;
 import client.Client.ClientListener;
+import client.Message;
 import client.model.DefaultClientListenerImpl;
 
 
@@ -94,6 +99,7 @@ public class ClientFrame extends BaseClientFrame{
 	public static void main(String[] args){
 		new ClientFrame().setVisible(true);
 	}
+
 }
 
 

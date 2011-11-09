@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyVetoException;
 import java.security.Key;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,7 +22,10 @@ import javax.swing.JTextField;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-public class ChatFrame extends JInternalFrame{
+import util.ObservableArrayList;
+import client.Message;
+
+public class ChatFrame extends JInternalFrame implements Observer{
 	private JPanel content;
 	private JTextArea chatTextArea;
 	private JTextArea messageTextArea;
@@ -112,6 +117,21 @@ public class ChatFrame extends JInternalFrame{
 	
 	public void setCaller(String caller){
 		this.caller = caller;
+	}
+	
+	
+	
+	@Override
+	/**
+	 * Método chamado quando acontece algo de interessante com os 
+	 * objetos que as instâncias dessa classe observam.
+	*/
+	public void update(Observable arg0, Object arg1) {
+		if(arg1 instanceof ObservableArrayList){
+			ObservableArrayList<Message> l = (ObservableArrayList<Message>) arg1;
+			System.out.println(caller + " says " + l.get(0));
+		}
+		
 	}
 	
 }

@@ -9,7 +9,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 
+import util.ObservableArrayList;
 import video.Client;
 import video.Server;
 
@@ -29,7 +31,7 @@ public class P2P extends Thread implements PeerListener{
 
 
 	private int port; 
-	ArrayList<Message> msgBuffer = new ArrayList<Message>();
+	List<Message> msgBuffer = new ObservableArrayList<Message>();
 	
 	public P2P(){
 		
