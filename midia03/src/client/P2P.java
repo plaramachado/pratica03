@@ -1,7 +1,9 @@
 package client;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,6 +14,9 @@ import video.Client;
 import video.Server;
 
 public class P2P extends Thread implements PeerListener{
+	Socket tcpConnection;
+	BufferedWriter bufferedWriter;
+	BufferedReader bufferedReader;
 	private String ip;
 	
 	private int receiveRTSPPort;
@@ -22,16 +27,36 @@ public class P2P extends Thread implements PeerListener{
 	private int receiveMessagePort;
 	private int sendMessagePort;
 
+
+	private int port; 
 	ArrayList<Message> msgBuffer = new ArrayList<Message>();
-	public void receiveText(String pText){
+	
+	public P2P(){
 		
 	}
-	public void sendText(String pText){
-		
+	public P2P(String ip, int port){
+		this.ip = ip;
+		this.port = port;
 	}
+	@Override
+	public void gotP2P(String ip, int port){
+		// TODO Auto-generated method stub
+		System.out.println("gotp2p");
+		try{
+		Thread.sleep(1000); } catch(Exception e) {}
+		this.ip = ip;
+		this.port = port;
+		new Thread("Client waiting for server thread"){
+			public void run() {
+				receiveP2P();
+			}
+		}.start();
+	}
+	
+	
 	public void gotP2P(String ip, int receiveRTSPPort, int sendRTSPPort, int RTPPort, int receiveMessagePort, int sendMessagePort) {
 
-		this.ip = ip;
+		
 		this.receiveRTSPPort = receiveRTSPPort;
 		this.sendRTSPPort = sendRTSPPort;
 		
@@ -41,11 +66,51 @@ public class P2P extends Thread implements PeerListener{
 		this.sendMessagePort = sendMessagePort;
 
 	}
+	public void requestP2P(){
+		String wRequest = "SETUP\r\n";
+		wRequest += "portext: " + String.valueOf(receiveMessagePort) + "\r\n";
+		wRequest += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
+		try {
+			tcpConnection= new Socket(ip, port);
+			bufferedWriter = new BufferedWriter(new OutputStreamWriter(tcpConnection.getOutputStream()) );
+			sendMessage(wRequest);
+			
+		} catch (Exception e){
+			e.printStackTrace();
+			endConnection();
+		}
+	}
+
+	public void receiveP2P(){
+		try{
+			tcpConnection= new Socket(ip, port);
+			bufferedReader = new BufferedReader(new InputStreamReader(tcpConnection.getInputStream()));
+			String request;
+			while((request = bufferedReader.readLine().trim()) != null){
+				if (request.contains("portext")){
+					sendMessagePort =  Integer.parseInt(request.substring(request.indexOf(": ")));
+				} else if (request.contains("porRTSP")) {
+					sendRTSPPort =  Integer.parseInt(request.substring(request.indexOf(": ")));
+				}
+			}
+			responseP2P();
+		} catch(Exception e){
+			
+		}
+	}
+	public void responseP2P(){
+		String wResponse = "SETUPOK \r\n";
+		wResponse += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
+	}
+	
+	
+	
+	
 	public void requestVideo(){ //request TO SEND a video
-		//if ok, call sendVideo()
+
 	}
 	public void acceptVideo(){ //accept TO RECEIVE a video
-		//if ok, call receiveVideo().. que nao tem a porra da chamada do start, tem que modificar video.cliente
+
 	}
 	public void receiveVideo(){
 		new Thread ("Receive video thread") {
@@ -131,14 +196,33 @@ public class P2P extends Thread implements PeerListener{
 		}
 		return wMessage;
 	}
-	@Override
-	public void gotP2P(String ip, int port) {
-		// TODO Auto-generated method stub
-		
-	}
+
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		
+	}
+	private void endConnection() {
+		if(tcpConnection == null) return;
+		try {
+			tcpConnection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+
+	public void sendMessage(String clientsMessage) {
+		try {
+			bufferedWriter.append(clientsMessage);
+			bufferedWriter.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			//			tcpConnexion.
+			e.printStackTrace();
+			endConnection();
+		}
 	}
 }

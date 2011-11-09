@@ -2,6 +2,8 @@ package client;
 
 import java.io.IOException;
 
+import server.MasterServer;
+
 public class Main {
 	/**
 	 * This main method will not be called regularly, there will be another class that starts up the GUI
@@ -12,13 +14,29 @@ public class Main {
 	 */
 	public static void main(String[] args) throws Exception{
 //video
-		//	pedro();
-	//	tiago();
+		//	pedro(); //executa a main com esse cara
+	//	tiago(); //depois só com esse
 //		Thread.sleep(1000);
 //		tiago.call(pedro.getUserName());
 		
 		
 		//texto
+		//texto();
+		
+		//testando call p2p
+		Client c1 = createClient("c1","123");
+		P2P p1 = new P2P("localhost",MasterServer.serverPort);
+		c1.setP2plistener(p1);
+		Client c2 = createClient("c2","123");
+		P2P p2 = new P2P("localhost",MasterServer.serverPort);
+		c2.setP2plistener(p2);
+		
+		c1.call("c2");
+		//System.out.println("ok?");
+		Thread.sleep(1000);
+		p2.requestP2P();
+	}
+	public void texto() throws Exception{
 		P2P bainca = bainca();
 		P2P felipe = felipe();
 		bainca.receiveMessage();
