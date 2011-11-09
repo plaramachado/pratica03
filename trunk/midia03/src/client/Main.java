@@ -11,17 +11,52 @@ public class Main {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws Exception{
-	//	pedro();
-		tiago();
+//video
+		//	pedro();
+	//	tiago();
 //		Thread.sleep(1000);
 //		tiago.call(pedro.getUserName());
 		
+		
+		//texto
+		P2P bainca = bainca();
+		P2P felipe = felipe();
+		bainca.receiveMessage();
+		felipe.receiveMessage();
+		Thread.sleep(1000);
+		bainca.sendMessage(new Message("ola felipe, eu sou o bainca!"));
+		bainca.sendMessage(new Message("alo?! tem alguem ai?"));
+		bainca.sendMessage(new Message("felipee!"));
+		felipe.sendMessage(new Message("ola, bainca, tava ocupado bla bla bla."));
+		
+		Message msg;
+		while ((msg = felipe.getMessage()) != null){
+			System.out.println(msg);
+		}
+		while ((msg = bainca.getMessage()) != null){
+			System.out.println(msg);
+		}
+		Thread.sleep(10000);
+	}
+	public static P2P bainca() throws Exception{
+		Client c = createClient("bainca","123");
+		P2P p2p = new P2P();
+		p2p.start();
+		p2p.gotP2P("localhost", 5052,5054,5056, 6000,6001);
+		return p2p;
+	}
+	public static P2P felipe() throws Exception{
+		Client c = createClient("felipe","123");
+		P2P p2p = new P2P();
+		p2p.start();
+		p2p.gotP2P("localhost", 5054,5052,5058,6001,6000);
+		return p2p;
 	}
 	public static void tiago() throws Exception{
 		Client tiago = createClient("tiago", "123");
 		P2P tiagop2p = new P2P();
 		tiagop2p.start();
-		tiagop2p.gotP2P("localhost", 5052,5054,5056); //ip do outro cliente
+		tiagop2p.gotP2P("localhost", 5052,5054,5056, 6000,6001); //ip do outro cliente
 		System.out.println("fui!");
 		tiagop2p.receiveVideo();
 		System.out.println("receiving");
@@ -32,7 +67,7 @@ public class Main {
 		Client pedro = createClient("pedro", "123");
 		P2P pedrop2p = new P2P();
 		pedrop2p.start();
-		pedrop2p.gotP2P("localhost", 5054,5052,5058); //ip do outro cliente
+		pedrop2p.gotP2P("localhost", 5054,5052,5058,7000,7001); //ip do outro cliente
 		pedrop2p.sendVideo();
 		Thread.sleep(20000);
 		pedrop2p.receiveVideo();

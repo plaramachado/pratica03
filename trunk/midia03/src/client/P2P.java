@@ -1,6 +1,12 @@
 package client;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import video.Client;
 import video.Server;
@@ -12,20 +18,27 @@ public class P2P extends Thread implements PeerListener{
 	private int sendRTSPPort;
 	
 	private int RTPPort;
+	
+	private int receiveMessagePort;
+	private int sendMessagePort;
 
+	ArrayList<Message> msgBuffer = new ArrayList<Message>();
 	public void receiveText(String pText){
 		
 	}
 	public void sendText(String pText){
 		
 	}
-	public void gotP2P(String ip, int receiveRTSPPort, int sendRTSPPort, int RTPPort) {
+	public void gotP2P(String ip, int receiveRTSPPort, int sendRTSPPort, int RTPPort, int receiveMessagePort, int sendMessagePort) {
 
 		this.ip = ip;
 		this.receiveRTSPPort = receiveRTSPPort;
 		this.sendRTSPPort = sendRTSPPort;
 		
 		this.RTPPort = RTPPort;
+		
+		this.receiveMessagePort = receiveMessagePort;
+		this.sendMessagePort = sendMessagePort;
 
 	}
 	public void requestVideo(){ //request TO SEND a video
@@ -75,8 +88,48 @@ public class P2P extends Thread implements PeerListener{
 		        
 			}
 		}.start();
-			
+	}
+	
+	public void sendMessage(Message msg){
+		try {
+			Socket socket = new Socket(ip,sendMessagePort);
+			PrintStream ps = new PrintStream(socket.getOutputStream()); 
+			ps.println(msg.getContent());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+	}
+	public void receiveMessage(){
+		new Thread("Receive message thread"){
+			public void run(){
+				try{
+					ServerSocket server = new ServerSocket(receiveMessagePort);
+					while(true){ //botar uma condicao decente aqui, tipo isNotDie()
+						Socket socket= server.accept();
+						BufferedReader buff = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+						Message msg = new Message(buff.readLine());
+						msgBuffer.add(msg);
+					}
+				} catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}.start();
+	}
+	
+	/** Gets the oldest message on buffer. 
+	 * 
+	 * @return the Message. Null if empty!
+	 */
+	public Message getMessage(){
+		Message wMessage; 
+		try{
+			wMessage = msgBuffer.remove(0);
+		} catch (Exception e){
+			wMessage = null;
+		}
+		return wMessage;
 	}
 	@Override
 	public void gotP2P(String ip, int port) {
