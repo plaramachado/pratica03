@@ -270,7 +270,7 @@ public class BaseClientFrame extends JFrame{
 	 * Creates a new chat frame. 
 	 * Called when one new conversation is initiated.
 	 * */
-	public void createChatFrame(String caller){
+	public ChatFrame createChatFrame(String caller){
 		// TO DO Considerar possibilidade de ja existir
 		// um frame associado a esta ligação
 		ChatFrame c = new ChatFrame();
@@ -278,9 +278,10 @@ public class BaseClientFrame extends JFrame{
 		c.setVisible(true);
 		c.moveToFront();
 		c.setSize(100, 100);
-		this.chatWindows.put(caller, c  );
+		//this.chatWindows.put(caller, c  );
 		this.getChatPanel().add(c);
 		this.repaint();
+		return c;
 	}
 
 	protected ImageIcon createImageIcon(String path) {
