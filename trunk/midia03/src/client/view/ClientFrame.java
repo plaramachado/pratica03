@@ -23,8 +23,10 @@ import util.ObservableArrayList;
 import client.Client;
 import client.Client.ClientListener;
 import client.Message;
+import client.PeerListener;
 import client.model.ClientInfo;
 import client.model.DefaultClientListenerImpl;
+import client.model.DefaultPeerListenerImpl;
 
 
 
@@ -36,6 +38,7 @@ public class ClientFrame extends BaseClientFrame{
 	private LoginDialog loginDialog;
 	private CallDialog callDialog;
 	private ClientListener clientListener;
+	private PeerListener peerListener;
 	
 	// Estas classes necessitam de uma instância por chamada
 	private Map<String, ClientInfo> peers;
@@ -56,8 +59,12 @@ public class ClientFrame extends BaseClientFrame{
 		
 		try {
 			this.client = new Client();
+			this.client.setPort(5151 + (int)Math.round(10000*Math.random())); //tiago
 			this.clientListener = new DefaultClientListenerImpl(this);
 			this.client.setListener(clientListener);
+			
+			this.peerListener = new DefaultPeerListenerImpl();
+			this.client.setP2plistener(peerListener);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

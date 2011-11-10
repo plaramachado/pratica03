@@ -110,6 +110,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 		
 		/* to p2p connection */
 		Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
+		System.out.println("caller: "+caller);
 		connections.get(caller).requestP2P();
 		
 		this.frame.getCallDialog().dispose();

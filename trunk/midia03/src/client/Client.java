@@ -68,6 +68,9 @@ public class Client {
 	}
 	
 
+	public void setP2plistener(PeerListener p2plistener) {
+		this.p2plistener = p2plistener;
+	}
 	public Map<String,P2P> getConnectionsP2P() {
 		return connectionsP2P;
 	}
