@@ -1,5 +1,5 @@
 package client;
 
 public interface PeerListener{
-	public void gotP2P(String ip, int port);
+	public void gotP2P(Client host, String ip, int port);
 }
