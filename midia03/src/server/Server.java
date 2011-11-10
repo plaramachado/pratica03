@@ -20,6 +20,29 @@ public class Server {
 	MasterServer master;
 	private boolean waitingForInviteConfirm;
 	private String lastCaller = "";
+	private ServerForker forker;
+	
+	public static interface ServerForker{
+		/**
+		 * This method receives a line read from the bufferedWriter and allows another class
+		 * to handle it. If it doesn't handle it, it returns false and this class will handle it.
+		 * If it returns true, then this class will ignore the line.
+		 * @return
+		 */
+		public boolean fork(String receivedLine);
+	}
+	
+	public void setForker(ServerForker forker) {
+		this.forker = forker;
+	}
+	
+	public BufferedReader getBufferedReader() {
+		return bufferedReader;
+	}
+	
+	public BufferedWriter getBufferedWriter() {
+		return bufferedWriter;
+	}
 
 	public RegisteredClient getClient() {
 		return client;
@@ -60,7 +83,11 @@ public class Server {
 			String newLine = "";
 			try {
 				newLine = bufferedReader.readLine();
-				while(newLine.trim().isEmpty()) newLine = bufferedReader.readLine(); 
+				while(newLine.trim().isEmpty()) newLine = bufferedReader.readLine();
+				if(forker != null){ 
+					boolean forked = forker.fork(newLine); //tries to fork the newLine
+					if(forked) continue;  //if it did fork, go back to the while, ignores this newLine
+				}
 				System.out.println("server newLine "+newLine);
 				StringTokenizer tokens = new StringTokenizer(newLine);
 				String request = ""; 

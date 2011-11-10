@@ -11,6 +11,8 @@ import server.view.ServerFrame;
 public class MasterServer {
 
 	public static final int serverPort = 2000;
+	
+	MasterGroupServer groupMaster;
 
 	ArrayList<Server> servers = new ArrayList<Server>();
 	ArrayList<RegisteredClient> clients = new ArrayList<RegisteredClient>();
@@ -94,6 +96,7 @@ public class MasterServer {
 						server.setMaster(MasterServer.this);
 						servers.add(server);
 						server.setListener(lis);
+						if(groupMaster != null) groupMaster.newServer(server);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
