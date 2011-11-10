@@ -15,7 +15,7 @@ import util.ObservableArrayList;
 import video.Client;
 import video.Server;
 
-public class P2P extends Thread implements PeerListener{
+public class P2P extends Thread{
 	Socket tcpConnection;
 	BufferedWriter bufferedWriter;
 	BufferedReader bufferedReader;
@@ -40,7 +40,7 @@ public class P2P extends Thread implements PeerListener{
 		this.ip = ip;
 		this.port = port;
 	}
-	@Override
+/*
 	public void gotP2P(String ip, int port){
 		// TODO Auto-generated method stub
 		System.out.println("gotp2p");
@@ -67,7 +67,7 @@ public class P2P extends Thread implements PeerListener{
 		this.receiveMessagePort = receiveMessagePort;
 		this.sendMessagePort = sendMessagePort;
 
-	}
+	}*/
 	public void requestP2P(){
 		String wRequest = "SETUP\r\n";
 		wRequest += "portext: " + String.valueOf(receiveMessagePort) + "\r\n";

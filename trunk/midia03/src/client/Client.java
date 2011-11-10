@@ -8,6 +8,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import server.MasterServer;
@@ -38,7 +40,8 @@ public class Client {
 	private BufferedWriter bufferedWriter;
 
 	ArrayList<String> clientsOnline = new ArrayList<String>();
-
+	private Map<String,P2P> connectionsP2P = new HashMap<String,P2P>();
+	
 	private String userName = "";
 	private String password = "";
 	private int port;
@@ -64,10 +67,17 @@ public class Client {
 		public void callCompleted(String lastClient);
 	}
 	
-	public void setP2plistener(PeerListener p2plistener) {
-		this.p2plistener = p2plistener;
-	}
 
+	public Map<String,P2P> getConnectionsP2P() {
+		return connectionsP2P;
+	}
+	public void setConnectionsP2P(Map<String,P2P> connectionsP2P) {
+		this.connectionsP2P = connectionsP2P;
+	}
+	
+	public String getLastClient() {
+		return lastClient;
+	}
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -143,7 +153,7 @@ public class Client {
 						tokens = new StringTokenizer(readLine);
 						tokens.nextToken(); //skips Destination-port:
 						String port = tokens.nextToken(); //gets port
-						if(p2plistener != null) p2plistener.gotP2P(ip, Integer.parseInt(port));
+						if(p2plistener != null) p2plistener.gotP2P(this, ip, Integer.parseInt(port));
 						if(listener != null) listener.callCompleted(lastClient);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
