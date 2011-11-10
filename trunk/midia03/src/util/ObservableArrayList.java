@@ -16,6 +16,8 @@ public class ObservableArrayList<T> extends Observable implements List<T>{
 	private ArrayList<T> data = new ArrayList<T>();
 	@Override
 	public boolean add(T e) {
+		this.setChanged();
+		notifyObservers();
 		return data.add(e);
 		//return false;
 	}
