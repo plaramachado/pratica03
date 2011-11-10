@@ -31,6 +31,8 @@ public class P2P extends Thread{
 
 
 	private int port; 
+	
+	boolean isConnected = false;
 	List<Message> msgBuffer = new ObservableArrayList<Message>();
 	
 	public P2P(){
@@ -69,17 +71,19 @@ public class P2P extends Thread{
 
 	}*/
 	public void requestP2P(){
-		String wRequest = "SETUP\r\n";
-		wRequest += "portext: " + String.valueOf(receiveMessagePort) + "\r\n";
-		wRequest += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
-		try {
-			tcpConnection= new Socket(ip, port);
-			bufferedWriter = new BufferedWriter(new OutputStreamWriter(tcpConnection.getOutputStream()) );
-			sendMessage(wRequest);
-			
-		} catch (Exception e){
-			e.printStackTrace();
-			endConnection();
+		if (!isConnected){
+			String wRequest = "SETUP\r\n";
+			wRequest += "portext: " + String.valueOf(receiveMessagePort) + "\r\n";
+			wRequest += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
+			try {
+				tcpConnection= new Socket(ip, port);
+				bufferedWriter = new BufferedWriter(new OutputStreamWriter(tcpConnection.getOutputStream()) );
+				sendMessage(wRequest);
+				//TODO SETAR ISCONNECTED PRA TRUE CASO OK
+			} catch (Exception e){
+				e.printStackTrace();
+				endConnection();
+			}
 		}
 	}
 
@@ -208,6 +212,7 @@ public class P2P extends Thread{
 		if(tcpConnection == null) return;
 		try {
 			tcpConnection.close();
+			isConnected = false;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
