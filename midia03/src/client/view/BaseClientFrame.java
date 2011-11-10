@@ -33,6 +33,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 
+import client.Client;
+
 /**
  * Client main window.
  * See action listeners for details
@@ -273,7 +275,7 @@ public class BaseClientFrame extends JFrame{
 	public ChatFrame createChatFrame(String caller){
 		// TO DO Considerar possibilidade de ja existir
 		// um frame associado a esta ligação
-		ChatFrame c = new ChatFrame();
+		ChatFrame c = new ChatFrame(this);
 		c.setTitle("Chat with " + caller);
 		c.setVisible(true);
 		c.moveToFront();
@@ -283,6 +285,8 @@ public class BaseClientFrame extends JFrame{
 		this.repaint();
 		return c;
 	}
+	
+	public Client getClient(){ return null;} // oOps
 
 	protected ImageIcon createImageIcon(String path) {
 		

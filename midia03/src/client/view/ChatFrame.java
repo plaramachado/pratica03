@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyVetoException;
 import java.security.Key;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -24,6 +25,7 @@ import javax.swing.event.InternalFrameListener;
 
 import util.ObservableArrayList;
 import client.Message;
+import client.P2P;
 
 public class ChatFrame extends JInternalFrame implements Observer{
 	private JPanel content;
@@ -32,16 +34,18 @@ public class ChatFrame extends JInternalFrame implements Observer{
 	private JPanel chatPanel;
 	private String caller;
 	private JButton sendButton;
+	private BaseClientFrame frame;
 	
 	
-	public ChatFrame(){
+	public ChatFrame(BaseClientFrame cf){
+		this.frame = cf;
 		this.setPreferredSize(new Dimension(400,400));
 		this.setResizable(true);
 		this.setIconifiable(true);
 		this.setMaximizable(true);
 		this.setClosable(true);
 		this.getContentPane().add(this.getChatPanel());
-		this.getMessageTextArea().addKeyListener(new EnterHitHandler());
+		this.getMessageTextArea().addKeyListener(new EnterHitHandler(this));
 		this.addInternalFrameListener(new CloseHandler());
 //		try {
 //			this.setMaximum(true);
@@ -111,12 +115,17 @@ public class ChatFrame extends JInternalFrame implements Observer{
 		return chatPanel;
 	}
 	
-//	private JButton getSendButton(){
-//		if(sendButton !)
-//	}
+	public BaseClientFrame getFrame() {
+		return this.frame;
+		
+	}
 	
 	public void setCaller(String caller){
 		this.caller = caller;
+	}
+	
+	public String getCaller(){
+		return this.caller;
 	}
 	
 	
@@ -148,71 +157,52 @@ public class ChatFrame extends JInternalFrame implements Observer{
 class CloseHandler implements InternalFrameListener{
 
 	@Override
-	public void internalFrameActivated(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void internalFrameClosed(InternalFrameEvent e) {
 		// TODO - logica para encerrar a conexao
 		
 	}
+	
+	public void internalFrameActivated(InternalFrameEvent e) {}
+	
+	public void internalFrameClosing(InternalFrameEvent e) {}
 
-	@Override
-	public void internalFrameClosing(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void internalFrameDeactivated(InternalFrameEvent e) {}
 
-	@Override
-	public void internalFrameDeactivated(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void internalFrameDeiconified(InternalFrameEvent e) {}
 
-	@Override
-	public void internalFrameDeiconified(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void internalFrameIconified(InternalFrameEvent e) {}
 
-	@Override
-	public void internalFrameIconified(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void internalFrameOpened(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void internalFrameOpened(InternalFrameEvent e) {}
 	
 }
 
 
 class EnterHitHandler implements KeyListener{
-
+	
+	private ChatFrame chatFrame;
+	
+	public EnterHitHandler(ChatFrame f){
+		this.chatFrame = f;
+	} 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO enviar a mensagem para o cliente
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			JOptionPane.showMessageDialog(null, "Hit enter, bitch");
+			
+			Map<String, P2P> m = 
+			this.chatFrame.getFrame().getClient().getConnectionsP2P();
+			P2P peer = m.get(chatFrame.getCaller());
+			String msg = chatFrame.getMessageTextArea().getText();
+			peer.sendMessage(new Message(msg));
+			chatFrame.getMessageTextArea().setText("");
+			chatFrame.getChatTextArea().append("\n" + chatFrame.getCaller() + ": " + msg);
+			
 		}
 		
 	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyReleased(KeyEvent e) {}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyTyped(KeyEvent e) {}
 	
 }

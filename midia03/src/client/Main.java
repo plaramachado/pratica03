@@ -26,10 +26,10 @@ public class Main {
 		//testando call p2p
 		Client c1 = createClient("c1","123");
 		P2P p1 = new P2P("localhost",MasterServer.serverPort);
-		c1.setP2plistener(p1);
+		//c1.setP2plistener(p1);
 		Client c2 = createClient("c2","123");
 		P2P p2 = new P2P("localhost",MasterServer.serverPort);
-		c2.setP2plistener(p2);
+		//c2.setP2plistener(p2);
 		
 		c1.call("c2");
 		//System.out.println("ok?");
@@ -60,21 +60,21 @@ public class Main {
 		Client c = createClient("bainca","123");
 		P2P p2p = new P2P();
 		p2p.start();
-		p2p.gotP2P("localhost", 5052,5054,5056, 6000,6001);
+		//p2p.gotP2P("localhost", 5052,5054,5056, 6000,6001);
 		return p2p;
 	}
 	public static P2P felipe() throws Exception{
 		Client c = createClient("felipe","123");
 		P2P p2p = new P2P();
 		p2p.start();
-		p2p.gotP2P("localhost", 5054,5052,5058,6001,6000);
+		//p2p.gotP2P("localhost", 5054,5052,5058,6001,6000);
 		return p2p;
 	}
 	public static void tiago() throws Exception{
 		Client tiago = createClient("tiago", "123");
 		P2P tiagop2p = new P2P();
 		tiagop2p.start();
-		tiagop2p.gotP2P("localhost", 5052,5054,5056, 6000,6001); //ip do outro cliente
+		//tiagop2p.gotP2P("localhost", 5052,5054,5056, 6000,6001); //ip do outro cliente
 		System.out.println("fui!");
 		tiagop2p.receiveVideo();
 		System.out.println("receiving");
@@ -85,7 +85,7 @@ public class Main {
 		Client pedro = createClient("pedro", "123");
 		P2P pedrop2p = new P2P();
 		pedrop2p.start();
-		pedrop2p.gotP2P("localhost", 5054,5052,5058,7000,7001); //ip do outro cliente
+		//pedrop2p.gotP2P("localhost", 5054,5052,5058,7000,7001); //ip do outro cliente
 		pedrop2p.sendVideo();
 		Thread.sleep(20000);
 		pedrop2p.receiveVideo();
