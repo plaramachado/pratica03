@@ -62,8 +62,8 @@ public class DefaultClientListenerImpl implements ClientListener {
 			peers.put(caller, info);
 			
 			/* to p2p connection */
-			Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
-			connections.get(caller).responseP2P();
+		//	Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
+		//	connections.get(caller).responseP2P();
 			
 		}else{
 			this.frame.getClient().refuseCall();
