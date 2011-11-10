@@ -76,6 +76,7 @@ public class P2P extends Thread{
 			wRequest += "portext: " + String.valueOf(receiveMessagePort) + "\r\n";
 			wRequest += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
 			try {
+				
 				tcpConnection= new Socket(ip, port);
 				bufferedWriter = new BufferedWriter(new OutputStreamWriter(tcpConnection.getOutputStream()) );
 				sendMessage(wRequest);
