@@ -80,6 +80,8 @@ public class P2P extends Thread{
 				bufferedWriter = new BufferedWriter(new OutputStreamWriter(tcpConnection.getOutputStream()) );
 				sendMessage(wRequest);
 				//TODO SETAR ISCONNECTED PRA TRUE CASO OK
+				startTextAndVideoServers(); //dei certo, vou iniciar
+				
 			} catch (Exception e){
 				e.printStackTrace();
 				endConnection();
@@ -100,6 +102,7 @@ public class P2P extends Thread{
 				}
 			}
 			responseP2P();
+			startTextAndVideoServers(); //dei certo, vou iniciar
 		} catch(Exception e){
 			
 		}
@@ -109,7 +112,15 @@ public class P2P extends Thread{
 		wResponse += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
 	}
 	
-	
+	public void startTextAndVideoServers(){
+		try {
+			sendVideo();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		receiveMessage();
+	}
 	
 	
 	public void requestVideo(){ //request TO SEND a video
