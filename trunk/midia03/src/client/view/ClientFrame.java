@@ -23,6 +23,7 @@ import util.ObservableArrayList;
 import client.Client;
 import client.Client.ClientListener;
 import client.Message;
+import client.P2P;
 import client.PeerListener;
 import client.model.ClientInfo;
 import client.model.DefaultClientListenerImpl;
@@ -56,6 +57,7 @@ public class ClientFrame extends BaseClientFrame{
 		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
 		this.getCallButton().addActionListener(new CallButtonListener(this));
+		this.getPlayVideoButton().addActionListener(new PlayVideoButtonListener(this));
 		
 		try {
 			this.client = new Client();
@@ -225,4 +227,17 @@ class CallButtonListener extends BaseListener{
 		
 	}
 	
+}
+class PlayVideoButtonListener extends BaseListener{
+	public PlayVideoButtonListener(ClientFrame c){
+		super(c);
+	}
+    public void actionPerformed(ActionEvent e){
+    	Client c = this.getFrame().getClient();
+    	String s = this.getFrame().getContactsList().getSelectedValue().toString();
+
+    	P2P p2p = c.getConnectionsP2P().get(s);
+    	p2p.receiveVideo();
+    }
+    
 }

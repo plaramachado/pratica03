@@ -92,7 +92,9 @@ public class P2P extends Thread{
 
 	public void receiveP2P(){
 		try{
-			tcpConnection= new Socket(ip, port);
+			System.out.println("receive1");
+			tcpConnection= new ServerSocket(port).accept();
+			System.out.println("receive2");
 			bufferedReader = new BufferedReader(new InputStreamReader(tcpConnection.getInputStream()));
 			String request;
 			while((request = bufferedReader.readLine().trim()) != null){
