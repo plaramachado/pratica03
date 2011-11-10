@@ -114,6 +114,10 @@ public class Server {
 						sendMessage("404 not found \r\n");
 					}
 				}
+				if(request.equals("UNREGISTER")){
+					String name = tokens.nextToken();
+					master.removeClient(name);
+				}
 				if(request.equals("REGISTER")){
 					String name = tokens.nextToken();
 					newLine = bufferedReader.readLine(); //password = *****

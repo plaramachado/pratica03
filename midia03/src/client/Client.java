@@ -107,6 +107,7 @@ public class Client {
 		startConnection();
 	}
 
+
 	private void startConnection() throws UnknownHostException, IOException {
 		serverSocket = new Socket(serverIP, serverPort);
 		bufferedReader = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
@@ -209,6 +210,11 @@ public class Client {
 		}
 	}
 
+	public void unregister(){
+		StringBuffer s = new StringBuffer("");
+		s.append("UNREGISTER " + userName + "\r\n");
+		sendMessage(s.toString());
+	}
 
 	public void register() {
 		StringBuffer s = new StringBuffer("");
