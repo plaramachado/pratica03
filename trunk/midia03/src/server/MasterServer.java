@@ -156,4 +156,14 @@ public class MasterServer {
 		Server findServer = findServer(lastCaller);
 		if(findServer != null) findServer.declineInvite();
 	}
+
+	public void removeClient(String name) {
+		Server findServer = findServer(name);
+		if(findServer != null){
+			servers.remove(findServer);
+			RegisteredClient client = findServer.getClient();
+			clients.remove(client);
+			updateClients();
+		}
+	}
 }
