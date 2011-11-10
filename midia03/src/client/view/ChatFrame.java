@@ -129,7 +129,10 @@ public class ChatFrame extends JInternalFrame implements Observer{
 	public void update(Observable arg0, Object arg1) {
 		if(arg1 instanceof ObservableArrayList){
 			ObservableArrayList<Message> l = (ObservableArrayList<Message>) arg1;
-			System.out.println(caller + " says " + l.get(0));
+			String s = this.getChatTextArea().getText();
+			s = s + "\n" + caller + ": " + l.iterator().next();
+			this.getChatTextArea().setText(s);
+			System.out.println(caller + " says " + l.iterator().next());
 		}
 		
 	}

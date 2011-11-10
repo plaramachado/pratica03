@@ -93,7 +93,17 @@ public class DefaultClientListenerImpl implements ClientListener {
 	public void callCompleted(String caller) {
 		// TODO Quer dize que é aqui que vai a mágica, seu Silvio?
 		// Adicionar a abertura dos sockets e tal
-		this.frame.createChatFrame(caller);
+		//this.frame.createChatFrame(caller);
+		
+		this.frame.getClient().acceptCall();
+		ChatFrame c = this.frame.createChatFrame(caller);
+		
+		Map<String, ClientInfo> peers = this.frame.getPeers();
+		ClientInfo info = new ClientInfo();
+		info.setChatFrame(c);
+		peers.put(caller, info);
+		
+		
 		this.frame.getCallDialog().dispose();
 
 	}
