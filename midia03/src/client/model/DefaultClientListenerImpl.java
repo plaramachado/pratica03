@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import client.Client.ClientListener;
+import client.P2P;
 import client.view.*;
 
 public class DefaultClientListenerImpl implements ClientListener {
@@ -60,6 +61,10 @@ public class DefaultClientListenerImpl implements ClientListener {
 			info.setChatFrame(c);
 			peers.put(caller, info);
 			
+			/* to p2p connection */
+			Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
+			connections.get(caller).responseP2P();
+			
 		}else{
 			this.frame.getClient().refuseCall();
 		}
@@ -103,6 +108,9 @@ public class DefaultClientListenerImpl implements ClientListener {
 		info.setChatFrame(c);
 		peers.put(caller, info);
 		
+		/* to p2p connection */
+		Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
+		connections.get(caller).requestP2P();
 		
 		this.frame.getCallDialog().dispose();
 
