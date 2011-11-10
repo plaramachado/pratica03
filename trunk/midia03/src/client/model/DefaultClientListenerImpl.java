@@ -1,6 +1,7 @@
 package client.model;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,7 +16,6 @@ public class DefaultClientListenerImpl implements ClientListener {
 	
 	public DefaultClientListenerImpl(ClientFrame frame){
 		this.frame = frame;
-		//System.out.println("Set frame on DefClientListener");
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 
 	@Override
 	public void registerError() {
-		// TODO Auto-generated method stub
+
 		JOptionPane.showMessageDialog(null, "Erro registering user");
 
 	}
@@ -53,7 +53,13 @@ public class DefaultClientListenerImpl implements ClientListener {
 		
 		if(answer == JOptionPane.YES_OPTION){
 			this.frame.getClient().acceptCall();
-			this.frame.createChatFrame(caller);
+			ChatFrame c = this.frame.createChatFrame(caller);
+			
+			Map<String, ClientInfo> peers = this.frame.getPeers();
+			ClientInfo info = new ClientInfo();
+			info.setChatFrame(c);
+			peers.put(caller, info);
+			
 		}else{
 			this.frame.getClient().refuseCall();
 		}

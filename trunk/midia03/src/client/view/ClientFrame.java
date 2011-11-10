@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -22,6 +23,7 @@ import util.ObservableArrayList;
 import client.Client;
 import client.Client.ClientListener;
 import client.Message;
+import client.model.ClientInfo;
 import client.model.DefaultClientListenerImpl;
 
 
@@ -29,11 +31,14 @@ import client.model.DefaultClientListenerImpl;
 
 public class ClientFrame extends BaseClientFrame{
 	
+	// Estas classes necessitam de apenas uma instância por aplicação
 	private Client client;
 	private LoginDialog loginDialog;
 	private CallDialog callDialog;
 	private ClientListener clientListener;
 	
+	// Estas classes necessitam de uma instância por chamada
+	private Map<String, ClientInfo> peers;
 	
 
 	/**
@@ -44,6 +49,7 @@ public class ClientFrame extends BaseClientFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(700, 500);
 		this.setMinimumSize(new Dimension(700, 500));
+		this.peers = new HashMap<String, ClientInfo>();
 		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
 		this.getCallButton().addActionListener(new CallButtonListener(this));
@@ -96,6 +102,14 @@ public class ClientFrame extends BaseClientFrame{
 		return this.client;
 	}
 	
+	public void setPeers(Map<String, ClientInfo> peers) {
+		this.peers = peers;
+	}
+
+	public Map<String, ClientInfo> getPeers() {
+		return peers;
+	}
+
 	public static void main(String[] args){
 		new ClientFrame().setVisible(true);
 	}
