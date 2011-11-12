@@ -86,7 +86,7 @@ public class GroupServer implements ServerForker {
 
 	@Override
 	public void connectionFell() {
-		
+		master.clientDies(server.getClient().getUserName());
 	}
 
 }
