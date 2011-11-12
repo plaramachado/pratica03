@@ -3,7 +3,10 @@ package server;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.RepaintManager;
+
 import server.view.ServerFrame;
+import videoConference.RepassClient;
 
 /**
  * @author Pedro
@@ -11,11 +14,11 @@ import server.view.ServerFrame;
  * or Instantiate masterServer and then just instantiate this guy
  */
 public class MasterGroupServer {
-	
+
 	ArrayList<GroupServer> groupServers = new ArrayList<GroupServer>();
 	ArrayList<Group> groups = new ArrayList<Group>();
 	MasterServer masterServer;
-	
+
 	public MasterGroupServer(MasterServer masterServer) {
 		super();
 		this.masterServer = masterServer;
@@ -25,26 +28,35 @@ public class MasterGroupServer {
 		String name;
 		String owner;
 		ArrayList<String> clientNames;
-		
+		boolean videoPassing = false;
+
+		public void setVideoPassing(boolean videoPassing) {
+			this.videoPassing = videoPassing;
+		}
+
+		public boolean isVideoPassing() {
+			return videoPassing;
+		}
+
 		public void addClient(String client){
 			clientNames.add(client);
 		}
-		
+
 		public void removeClient(String client){
 			clientNames.remove(client);
 		}
-		
+
 		public boolean containClient(String client){
 			for (int i = 0; i < clientNames.size(); i++) {
 				if(clientNames.get(i).equals(client)) return true;
 			}
 			return false;
 		}
-		
+
 		public boolean isOwner(String client){
 			return owner.equals(client);
 		}
-		
+
 		public String getParticipantsMessage(){
 			String msg = "PARTICIPANTS \r\n";
 			for (int i = 0; i < clientNames.size(); i++) {
@@ -53,11 +65,11 @@ public class MasterGroupServer {
 			msg += "\r\n";
 			return msg;
 		}
-		
+
 		public ArrayList<String> getClientNames() {
 			return clientNames;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
@@ -108,7 +120,7 @@ public class MasterGroupServer {
 
 	public void refusedClient(String clientName, String groupName) {
 		masterServer.sendMessage(clientName, Messages.refused(groupName));
-		
+
 	}
 
 	public void acceptClient(String clientName, String groupName) {
@@ -149,15 +161,15 @@ public class MasterGroupServer {
 		group.removeClient(userName);
 		updateGroupParticipants(groupName);
 	}
-	
+
 	public static void main(String[] args) throws IOException{
 		MasterServer m = new MasterServer();
 		ServerFrame s = new ServerFrame();
 		m.setListener(s.getListener());
 		m.listen();
-		
+
 		MasterGroupServer mg = new MasterGroupServer(m);
-		
+
 	}
 
 	public void clientDies(String userName) {
@@ -170,7 +182,7 @@ public class MasterGroupServer {
 				closeGroup(group.getName());
 			}
 		}
-			
+
 	}
 
 	public void groupText(String groupName, String message, String userName) {
@@ -181,5 +193,24 @@ public class MasterGroupServer {
 			String clientName = clientNames.get(i);
 			masterServer.sendMessage(clientName, msg);
 		}
+	}
+
+	public boolean canPassVideo(String groupName) {
+		Group group = getGroup(groupName);
+		return !group.isVideoPassing();
+	}
+
+	public void passVideo(String groupName, int port,
+			RegisteredClient client) {
+		int main = 0;
+		try {
+			main = RepassClient.main(client.getIp(), port);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(main == 0) System.out.println("BAD PORT SERVER");
+		Messages.videoGo(groupName, main);
+		// TODO Auto-generated catch block
 	}
 }
