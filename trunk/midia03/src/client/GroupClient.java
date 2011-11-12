@@ -1,9 +1,12 @@
 package client;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import server.Messages;
+import videoConference.ServerVideo;
 import client.Client.ClientForker;
 
 /**
@@ -20,6 +23,7 @@ import client.Client.ClientForker;
  * requestJoin
  * requestGroupList
  * groupLeave
+ * groupText
  * 
  * You also need to implement GroupClientListener to create the callback methods, and then use setListener
  * 
@@ -158,6 +162,20 @@ public class GroupClient implements ClientForker{
 	public void groupText(String message){
 		String msg = Messages.groupText(groupJoined, message);
 		client.sendMessage(msg);
+	}
+	
+	public void sendVideo(){
+		int rtspPortUsed = 0;
+		try {
+			rtspPortUsed = ServerVideo.mainMethod(0);
+		}
+		 catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(rtspPortUsed == 0) System.out.println("BAD PORT HERE");
+		String sendVideo = Messages.sendVideo(myGroupName, rtspPortUsed);
+		client.sendMessage(sendVideo);
 	}
 	
 	GroupClientListener listener = new GroupClientListener() { //EMPTY IMPLEMENTATION, to avoid nullPointer
