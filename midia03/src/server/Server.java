@@ -30,6 +30,8 @@ public class Server {
 		 * @return
 		 */
 		public boolean fork(String receivedLine);
+		
+		public void connectionFell();
 	}
 	
 	public void setForker(ServerForker forker) {
@@ -174,6 +176,7 @@ public class Server {
 			e.printStackTrace();
 		}
 		listener.offClient(client, this);
+		if(forker != null) forker.connectionFell();
 	}
 
 
