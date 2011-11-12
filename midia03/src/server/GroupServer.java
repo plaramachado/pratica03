@@ -94,6 +94,23 @@ public class GroupServer implements ServerForker {
 			String groupList = master.getGroupList();
 			server.sendMessage(groupList);
 		}
+		if(nextToken.equals("SENDVIDEO")){
+			processed = true;
+			String groupName = tokens.nextToken();
+			boolean canPass = master.canPassVideo(groupName);
+			if(canPass){
+				String port = tokens.nextToken();
+				master.passVideo(groupName, Integer.parseInt(port), server.getClient());
+				
+				server.sendMessage(Messages.videoAccept(groupName));
+				
+			} else{
+				server.sendMessage(Messages.videoReject(groupName));
+				
+			}
+//			String groupName = tokens.nextToken();
+			//FINISH THIS UP
+		}
 		return processed;
 	}
 

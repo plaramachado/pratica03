@@ -125,7 +125,7 @@ public class MutiServer extends JFrame implements ActionListener {
 	public static void main(String[] args) throws Exception{
 		main(1100);
 	}
-	public static void main(int RTSPport) throws Exception
+	public static int main(int RTSPport) throws Exception
 	{
 		//	  File file = new File("movie.Mjpeg");
 		//	  System.out.println(file.getAbsolutePath()+" exists "+file.exists());
@@ -210,8 +210,7 @@ public class MutiServer extends JFrame implements ActionListener {
 
 			};
 		}.start();
-		
-		//    
+		return rtspPortUsed;
 
 	}
 	/* ### MOD 3.3*/

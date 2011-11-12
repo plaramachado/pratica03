@@ -92,7 +92,7 @@ public class RepassClient{
 		main(args[0], Integer.parseInt(args[1]));
 		
 	}
-	public static void main(String ip, int videoPort) throws Exception
+	public static int main(String ip, int videoPort) throws Exception
 	{
 			//Create a Client object
 			RepassClient theClient = new RepassClient();
@@ -127,8 +127,11 @@ public class RepassClient{
 			theClient.new SetupButtonListener().actionPerformed(null);
 			Thread.sleep(100);
 			theClient.new playButtonListener().actionPerformed(null);
-			MutiServer.main(1100);
-			while(true);
+			
+			//this line has been added for debug, it starts an infinite while if you`re using a fixed port
+			if(videoPort != 0) while(true); //if you tried to use a fixed port, it locks the code, used for debugging
+			
+			return MutiServer.main(0);
 //		}
 	}
 

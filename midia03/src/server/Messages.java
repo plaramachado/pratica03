@@ -62,6 +62,18 @@ public class Messages {
 	public static String sendVideo(String myGroupName, int rtspPortUsed) {
 		return "SENDVIDEO " + myGroupName + " " + rtspPortUsed + " \r\n";
 	}
+
+	public static String videoReject(String groupName) {
+		return "VIDEOREFUSED " + groupName + " \r\n";
+	}
+	
+	public static String videoAccept(String groupName) {
+		return "VIDEOACCEPT " + groupName + " \r\n";
+	}
+
+	public static String videoGo(String groupName, int port) {
+		return "VIDEOGO " + groupName + " " + port + " \r\n";
+	}
 	
 	
 
