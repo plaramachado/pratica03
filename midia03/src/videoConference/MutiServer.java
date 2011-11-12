@@ -53,7 +53,7 @@ public class MutiServer extends JFrame implements ActionListener {
 	static int FRAME_PERIOD = 100; //Frame period of the video to stream, in ms
 	static int VIDEO_LENGTH = 500; //length of the video in frames
 
-//	static Timer timer; //timer used to send the images at the video frame rate CHANGE
+	//	static Timer timer; //timer used to send the images at the video frame rate CHANGE
 	static byte[] buf; //buffer used to store the images to send to the client CHANGE
 
 	//RTSP variables
@@ -81,15 +81,16 @@ public class MutiServer extends JFrame implements ActionListener {
 	final static String CRLF = "\r\n";
 	private static MultiActionListener multiActionListener; //change
 	private static int image_length; //CHANGE
-	
+	private static int rtspPortUsed;
+
 	public static void triggerMultiAction(){
 		multiActionListener.actionPerformed(null);
 	}
-	
+
 	public static void setCurrentPack(DatagramPacket currentPack) {
 		MutiServer.currentPack = currentPack;
 	}
-	
+
 	/*### FIM DA MOD 1.1*/
 
 	//--------------------------------
@@ -109,8 +110,8 @@ public class MutiServer extends JFrame implements ActionListener {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) { //CHANGE
 				//stop the timer and exit 
-//				timer.stop();
-//				System.exit(0);
+				//				timer.stop();
+				//				System.exit(0);
 			}});
 		/*### FIM DA MOD 3.1*/
 		//GUI:
@@ -140,64 +141,76 @@ public class MutiServer extends JFrame implements ActionListener {
 				super.actionPerformed(e);
 			}
 		};
-//		timer = new Timer(FRAME_PERIOD, multiActionListener);
-//		timer.setInitialDelay(0);
-//		timer.setCoalesce(true);
+		//		timer = new Timer(FRAME_PERIOD, multiActionListener);
+		//		timer.setInitialDelay(0);
+		//		timer.setCoalesce(true);
 		/*### FIM DA MOD 3.2*/
 
 		//Initiate TCP connection with the client for the RTSP session
 		final ServerSocket listenSocket = new ServerSocket(RTSPport);
-		while(true){
-			System.out.println("Waiting for Connection");
-			Socket accept = listenSocket.accept();
-			final MutiServer theServer = new MutiServer();
-			theServer.RTSPsocket = accept;
-			System.out.println("Got Connection");
-			new Thread(){
-				public void run() {
-					//create a Server object
+		rtspPortUsed = listenSocket.getLocalPort();
+		new Thread("Server wait video"){
+			public void run() {
+				while(true){
+					System.out.println("Waiting for Connection");
+					Socket accept = null;
 					try {
-						System.out.println("SERVER TO STRING " +theServer);
-						singleMain(theServer);
-					} catch (SocketException e) {
+						accept = listenSocket.accept();
+					} catch (IOException e2) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
-						try {
-							listenSocket.close();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+						e2.printStackTrace();
+					}
+					final MutiServer theServer = new MutiServer();
+					theServer.RTSPsocket = accept;
+					System.out.println("Got Connection");
+					new Thread("Single server thread"){
+						public void run() {
+							//create a Server object
+							try {
+								System.out.println("SERVER TO STRING " +theServer);
+								singleMain(theServer);
+							} catch (SocketException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								try {
+									listenSocket.close();
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								try {
+									listenSocket.close();
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								try {
+									listenSocket.close();
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}// finally{
+							//					try {
+							//						
+							//					} catch (IOException e) {
+							//						// TODO Auto-generated catch block
+							//						e.printStackTrace();
+							//					}
+							//}
 						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						try {
-							listenSocket.close();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						try {
-							listenSocket.close();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}// finally{
-					//					try {
-					//						
-					//					} catch (IOException e) {
-					//						// TODO Auto-generated catch block
-					//						e.printStackTrace();
-					//					}
-					//}
+					}.start();
 				}
-			}.start();
-		}
 
+			};
+		}.start();
+		
 		//    
 
 	}
@@ -207,7 +220,7 @@ public class MutiServer extends JFrame implements ActionListener {
 		{
 			//update current imagenb
 			imagenb++;
-			
+
 			try {
 				image_length = video.getnextframe(buf);
 			} catch (Exception e) {
@@ -273,7 +286,7 @@ public class MutiServer extends JFrame implements ActionListener {
 				multiActionListener.add(theServer); //CHANGE
 				/*### FIM DA MOD 3.4*/
 				/*### MOD 2.1*/
-//				timer.start(); //CHANGE
+				//				timer.start(); //CHANGE
 				/*### FIM DA MOD 2.1*/
 			}
 		}
@@ -285,26 +298,26 @@ public class MutiServer extends JFrame implements ActionListener {
 			request_type = theServer.parse_RTSP_request(); //blocking
 			if(request_type == -1) break; //CHANGE
 
-//			if ((request_type == PLAY) && (theServer.state == READY))
-//			{
-//				//send back response
-//				theServer.send_RTSP_response();
-//				//start timer
-//				theServer.timer.start();
-//				//update state
-//				theServer.state = PLAYING;
-//				System.out.println("New RTSP state: PLAYING");
-//			}
-//			else if ((request_type == PAUSE) && (theServer.state == PLAYING))
-//			{
-//				//send back response
-//				theServer.send_RTSP_response();
-//				//stop timer
-//				theServer.timer.stop();
-//				//update state
-//				theServer.state = READY;
-//				System.out.println("New RTSP state: READY");
-//			}
+			//			if ((request_type == PLAY) && (theServer.state == READY))
+			//			{
+			//				//send back response
+			//				theServer.send_RTSP_response();
+			//				//start timer
+			//				theServer.timer.start();
+			//				//update state
+			//				theServer.state = PLAYING;
+			//				System.out.println("New RTSP state: PLAYING");
+			//			}
+			//			else if ((request_type == PAUSE) && (theServer.state == PLAYING))
+			//			{
+			//				//send back response
+			//				theServer.send_RTSP_response();
+			//				//stop timer
+			//				theServer.timer.stop();
+			//				//update state
+			//				theServer.state = READY;
+			//				System.out.println("New RTSP state: READY");
+			//			}
 			else if (request_type == TEARDOWN)
 			{
 				/* ### MOD 4.1 */
@@ -334,7 +347,7 @@ public class MutiServer extends JFrame implements ActionListener {
 	}
 
 	private static void stopVideo() {//CHANGE
-//		timer.stop();
+		//		timer.stop();
 		video.reset();
 	}
 	/* ### FIM MOD 4.2 */
@@ -347,46 +360,46 @@ public class MutiServer extends JFrame implements ActionListener {
 		//change no longer mess with imagenb here
 		//if the current image nb is less than the length of the video
 		//no longer gets buffer image here
-//		if (imagenb < VIDEO_LENGTH)
-//		{
+		//		if (imagenb < VIDEO_LENGTH)
+		//		{
 
-			try {
-				if(currentPack != null){ 
-					currentPack.setPort(RTP_dest_port);
-					currentPack.setAddress(ClientIPAddr);
-					RTPsocket.send(currentPack);
-					System.out.println("sentPack - "+RTPsocket.getLocalPort() + "-"+RTPsocket.getPort());
-				}
-				
-				//CHANGE 
+		try {
+			if(currentPack != null){ 
+				currentPack.setPort(RTP_dest_port);
+				currentPack.setAddress(ClientIPAddr);
+				RTPsocket.send(currentPack);
+				System.out.println("sentPack - "+RTPsocket.getLocalPort() + "-"+RTPsocket.getPort());
+			}
 
-//				//Builds an RTPpacket object containing the frame
-//				RTPpacket rtp_packet = new RTPpacket(MJPEG_TYPE, imagenb, imagenb*FRAME_PERIOD, buf, image_length);
-//
-//				//get to total length of the full rtp packet to send
-//				int packet_length = rtp_packet.getlength();
-//
-//				//retrieve the packet bitstream and store it in an array of bytes
-//				byte[] packet_bits = new byte[packet_length];
-//				rtp_packet.getpacket(packet_bits);
-//
-//				//send the packet as a DatagramPacket over the UDP socket
-//				senddp = new DatagramPacket(packet_bits, packet_length, ClientIPAddr, RTP_dest_port);
-//				RTPsocket.send(senddp);
-//
-//				//System.out.println("Send frame #"+imagenb);
-//				//print the header bitstream
-//				rtp_packet.printheader();
-//
-//				//update GUI
-//				label.setText("Send frame #" + imagenb);
-			}
-			catch(Exception ex)
-			{
-				System.out.println("Exception caught: "+ex); ex.printStackTrace();
-				//	    System.exit(0);
-			}
-//		}
+			//CHANGE 
+
+			//				//Builds an RTPpacket object containing the frame
+			//				RTPpacket rtp_packet = new RTPpacket(MJPEG_TYPE, imagenb, imagenb*FRAME_PERIOD, buf, image_length);
+			//
+			//				//get to total length of the full rtp packet to send
+			//				int packet_length = rtp_packet.getlength();
+			//
+			//				//retrieve the packet bitstream and store it in an array of bytes
+			//				byte[] packet_bits = new byte[packet_length];
+			//				rtp_packet.getpacket(packet_bits);
+			//
+			//				//send the packet as a DatagramPacket over the UDP socket
+			//				senddp = new DatagramPacket(packet_bits, packet_length, ClientIPAddr, RTP_dest_port);
+			//				RTPsocket.send(senddp);
+			//
+			//				//System.out.println("Send frame #"+imagenb);
+			//				//print the header bitstream
+			//				rtp_packet.printheader();
+			//
+			//				//update GUI
+			//				label.setText("Send frame #" + imagenb);
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Exception caught: "+ex); ex.printStackTrace();
+			//	    System.exit(0);
+		}
+		//		}
 	}
 
 	//------------------------------------
@@ -405,8 +418,8 @@ public class MutiServer extends JFrame implements ActionListener {
 				removeOneServer(this);
 				return -1; //CHANGE}
 			}
-				
-				
+
+
 			StringTokenizer tokens = new StringTokenizer(RequestLine);
 			String request_type_string = tokens.nextToken();
 			System.out.println("request_string is: "+request_type_string);
@@ -414,10 +427,10 @@ public class MutiServer extends JFrame implements ActionListener {
 			//convert to request_type structure:
 			if ((new String(request_type_string)).compareTo("SETUP") == 0)
 				request_type = SETUP;
-//			else if ((new String(request_type_string)).compareTo("PLAY") == 0)
-//				request_type = PLAY;
-//			else if ((new String(request_type_string)).compareTo("PAUSE") == 0)
-//				request_type = PAUSE;
+			//			else if ((new String(request_type_string)).compareTo("PLAY") == 0)
+			//				request_type = PLAY;
+			//			else if ((new String(request_type_string)).compareTo("PAUSE") == 0)
+			//				request_type = PAUSE;
 			else if ((new String(request_type_string)).compareTo("TEARDOWN") == 0)
 				request_type = TEARDOWN;
 

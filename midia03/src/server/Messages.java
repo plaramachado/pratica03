@@ -58,6 +58,10 @@ public class Messages {
 			String userName) {
 		return "TEXTGROUP " + groupName + " " + userName+ " \r\n" + message+ " \r\n\r\n";
 	}
+
+	public static String sendVideo(String myGroupName, int rtspPortUsed) {
+		return "SENDVIDEO " + myGroupName + " " + rtspPortUsed + " \r\n";
+	}
 	
 	
 
