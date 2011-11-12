@@ -54,6 +54,17 @@ public class Client {
 	private String lastClient = ""; //the last client called
 	private String caller;
 	
+	ClientForker forker;
+	
+	public void setForker(ClientForker forker) {
+		this.forker = forker;
+	}
+	
+	public static interface ClientForker{
+		public boolean fork(String newLine);
+		public void connectionDied();
+	}
+	
 	public int getPort() {
 		return port;
 	}
@@ -136,6 +147,10 @@ public class Client {
 				connectionDies();
 				done = true;
 				e.printStackTrace();
+			}
+			if(forker != null){ //allows the processing of server message to be done by another class
+				boolean fork = forker.fork(readLine);
+				if(fork) continue;
 			}
 			if(waitingForCall){
 				if(readLine.contains("100") || readLine.contains("101") || readLine.contains("180")){
@@ -239,7 +254,7 @@ public class Client {
 		sendMessage(s.toString());
 	}
 
-	private void sendMessage(String message) {
+	public void sendMessage(String message) {
 		try {
 			waitingForOnlineConfirm = true;
 			bufferedWriter.append(message);
@@ -253,6 +268,7 @@ public class Client {
 
 	private void connectionDies() {
 		if(listener != null) listener.changeStateOnline(false);
+		if(forker != null) forker.connectionDied();
 		if(serverSocket != null && !serverSocket.isClosed())
 			try {
 				serverSocket.close();
@@ -275,8 +291,14 @@ public class Client {
 	public void refuseCall(){
 		sendMessage(Server.DECLINE);
 	}
-	
-	public void sendText(String pText){
-		
+	public String getNextLine() {
+		try {
+			return bufferedReader.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
+	
 }
