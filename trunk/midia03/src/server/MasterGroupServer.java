@@ -34,6 +34,17 @@ public class MasterGroupServer {
 			clientNames.remove(client);
 		}
 		
+		public boolean containClient(String client){
+			for (int i = 0; i < clientNames.size(); i++) {
+				if(clientNames.get(i).equals(client)) return true;
+			}
+			return false;
+		}
+		
+		public boolean isOwner(String client){
+			return owner.equals(client);
+		}
+		
 		public String getParticipantsMessage(){
 			String msg = "PARTICIPANTS \r\n";
 			for (int i = 0; i < clientNames.size(); i++) {
@@ -147,5 +158,18 @@ public class MasterGroupServer {
 		
 		MasterGroupServer mg = new MasterGroupServer(m);
 		
+	}
+
+	public void clientDies(String userName) {
+		for (int i = 0; i < groups.size(); i++) {
+			Group group = groups.get(i);
+			if(group.containClient(userName)){ 
+				clientLeave(group.getName(), userName);
+			}
+			if(group.isOwner(userName)){
+				closeGroup(group.getName());
+			}
+		}
+			
 	}
 }

@@ -84,4 +84,9 @@ public class GroupServer implements ServerForker {
 		this.master = masterGroupServer;
 	}
 
+	@Override
+	public void connectionFell() {
+		
+	}
+
 }
