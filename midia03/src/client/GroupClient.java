@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import server.Messages;
+import videoConference.ClientVideo;
 import videoConference.ServerVideo;
 import client.Client.ClientForker;
 
@@ -120,6 +121,18 @@ public class GroupClient implements ClientForker{
 				participants.add(clientName);
 			}
 			listener.updateClientsInGroup(participants);
+		}
+		if(nextToken.equals("VIDEOGO")){
+			String groupName = tokens.nextToken();
+			String connectPort = tokens.nextToken();
+			int portNumber = Integer.parseInt(connectPort);
+			try {
+				ClientVideo.main(Client.serverIP, portNumber);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			listener.videoPassing(groupName);
 		}
 		return processed;
 	}
@@ -236,6 +249,12 @@ public class GroupClient implements ClientForker{
 
 		@Override
 		public void textArrives(String groupName, String clientName, String msg) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void videoPassing(String groupName) {
 			// TODO Auto-generated method stub
 			
 		}

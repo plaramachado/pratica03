@@ -63,6 +63,18 @@ public interface GroupClientListener{
 	 */
 	void groupEnded(String groupName);
 
+	/**
+	 * Text arrives from the group
+	 * @param groupName
+	 * @param clientName
+	 * @param msg
+	 */
 	void textArrives(String groupName, String clientName, String msg);
+
+	/**
+	 * This is handle internally, even the GUI, but I left it here for little reason.
+	 * @param groupName
+	 */
+	void videoPassing(String groupName);
 
 }

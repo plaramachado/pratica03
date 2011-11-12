@@ -35,7 +35,7 @@ import server.Server;
  */
 public class Client {
 	private static final int serverPort = MasterServer.serverPort;
-	private static final String serverIP = "localhost";
+	public static final String serverIP = "localhost";
 	private BufferedReader bufferedReader;
 	private BufferedWriter bufferedWriter;
 
