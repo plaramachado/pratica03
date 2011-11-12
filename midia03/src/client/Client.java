@@ -52,8 +52,11 @@ public class Client {
 	private boolean waitingForOnlineConfirm;
 	private boolean waitingForCall;
 	private String lastClient = ""; //the last client called
+	private String caller;
 	
-
+	public int getPort() {
+		return port;
+	}
 	
 	public static interface ClientListener{
 		public void changeStateOnline(boolean state); //the state represents online(true), offline(false)
@@ -64,7 +67,7 @@ public class Client {
 		public void updateCallStatus(String status); //for monitoring the call status
 		public void callFailedNotFound();
 		public void callFailedDecline();
-		public void callCompleted(String lastClient);
+		public void callCompleted(String ip, int port, String callerName);
 	}
 	
 
@@ -157,8 +160,8 @@ public class Client {
 						tokens = new StringTokenizer(readLine);
 						tokens.nextToken(); //skips Destination-port:
 						String port = tokens.nextToken(); //gets port
-						if(p2plistener != null) p2plistener.gotP2P(this, ip, Integer.parseInt(port));
-						if(listener != null) listener.callCompleted(lastClient);
+						//if(p2plistener != null) p2plistener.gotP2P(this, ip, Integer.parseInt(port));
+						if(listener != null) listener.callCompleted(ip, Integer.parseInt(port), lastClient);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -170,7 +173,7 @@ public class Client {
 			if(readLine.trim().contains("INVITE")){
 				StringTokenizer tokens = new StringTokenizer(readLine);
 				tokens.nextToken(); //skips INVITE
-				String caller = tokens.nextToken(); //gets the id of the caller
+				caller = tokens.nextToken();
 				if(listener != null) listener.incomingCall(caller);
 			}
 			if(readLine.trim().equals("401")){ //error
@@ -263,7 +266,10 @@ public class Client {
 	 * Called when you want to accept a call
 	 */
 	public void acceptCall(){
+		//p2plistener.invitedP2P(this, caller);
 		sendMessage(Server.SIMPLEOK);
+		
+		
 	}
 	
 	public void refuseCall(){

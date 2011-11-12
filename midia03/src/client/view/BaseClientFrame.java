@@ -84,12 +84,12 @@ public class BaseClientFrame extends JFrame{
 		this.getChatWindows();
 		
 		//Tenta alterar o look and feel
-		try {
-		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
-		    
-		} catch (Exception e) {
-			System.out.println("Coudnt change look and feel");			
-		}
+//		try {
+//		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+//		    
+//		} catch (Exception e) {
+//			System.out.println("Coudnt change look and feel");			
+//		}
 		
 		
 		this.pack();
@@ -280,6 +280,7 @@ public class BaseClientFrame extends JFrame{
 		c.setVisible(true);
 		c.moveToFront();
 		c.setSize(100, 100);
+		c.setCaller(caller);
 		//this.chatWindows.put(caller, c  );
 		this.getChatPanel().add(c);
 		this.repaint();
