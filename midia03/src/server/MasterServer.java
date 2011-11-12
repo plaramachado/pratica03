@@ -75,6 +75,9 @@ public class MasterServer {
 	}
 
 	public static void main(String[] args) throws IOException{
+		/*
+		 * This is for part 1 alone. Go to MasterGroupServer for part 2
+		 */
 		MasterServer m = new MasterServer();
 		ServerFrame s = new ServerFrame();
 		m.setListener(s.getListener());
@@ -83,7 +86,7 @@ public class MasterServer {
 		
 	}
 
-	private void listen() throws IOException {
+	public void listen() throws IOException {
 		final ServerSocket listenSocket = new ServerSocket(serverPort);
 		while(true){
 			System.out.println("Waiting for Connection");

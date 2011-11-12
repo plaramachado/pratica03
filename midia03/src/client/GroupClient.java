@@ -6,10 +6,27 @@ import java.util.StringTokenizer;
 import server.Messages;
 import client.Client.ClientForker;
 
+/**
+ * @author Pedro
+ * First, to use this, you need to have an instance of Client, to be instantiate this guy.
+ * So basically you used client the same way as before, and the new parts of the interface that handle groups
+ * only need to interact with this guy. Methods that need to be called by the interface:
+ * 
+ * *** Administrator methods:
+ * createGroup
+ * refuseJoin
+ * acceptJoin
+ * *** Client methods:
+ * requestJoin
+ * requestGroupList
+ * groupLeave
+ * 
+ * You also need to implement GroupClientListener to create the callback methods, and then use setListener
+ * 
+ * Of course, there is more to come in this very class and in the listener
+ */
 public class GroupClient implements ClientForker{
 	Client client;
-
-	
 
 	private String myGroupName = "";
 	private String groupJoined = "";
