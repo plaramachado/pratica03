@@ -47,6 +47,17 @@ public class GroupClient implements ClientForker{
 		StringTokenizer tokens = new StringTokenizer(newLine);
 		String nextToken = tokens.nextToken();
 		//		nextToken = nextToken.trim();
+		if(nextToken.equals("TEXTGROUP")){
+			String groupName = tokens.nextToken();
+			String clientName = tokens.nextToken();
+			String nextLine = client.getNextLine();
+			String msg = "";
+			while(!nextLine.trim().isEmpty()){
+				msg += nextLine + " \r\n";
+				nextLine = client.getNextLine();
+			}
+			listener.textArrives(groupName, clientName, msg);
+		}
 		if(nextToken.equals("CLOSED")){
 			processed = true;
 			String groupName = tokens.nextToken();
@@ -144,6 +155,11 @@ public class GroupClient implements ClientForker{
 		client.sendMessage(msg);
 	}
 	
+	public void groupText(String message){
+		String msg = Messages.groupText(groupJoined, message);
+		client.sendMessage(msg);
+	}
+	
 	GroupClientListener listener = new GroupClientListener() { //EMPTY IMPLEMENTATION, to avoid nullPointer
 
 		@Override
@@ -196,6 +212,12 @@ public class GroupClient implements ClientForker{
 
 		@Override
 		public void groupEnded(String groupName) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void textArrives(String groupName, String clientName, String msg) {
 			// TODO Auto-generated method stub
 			
 		}

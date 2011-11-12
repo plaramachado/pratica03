@@ -2,6 +2,7 @@ package server;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import server.Server.ServerForker;
@@ -25,6 +26,24 @@ public class GroupServer implements ServerForker {
 		boolean processed = false; //if the fork happens
 		StringTokenizer tokens = new StringTokenizer(receivedLine);
 		String nextToken = tokens.nextToken();
+		if(nextToken.equals("GROUPTEXT")){
+			String message = "";
+			processed = true;
+			String groupName = tokens.nextToken();
+			String newLine = "";
+			try {
+				newLine = bufferedReader.readLine();
+				while(!newLine.trim().isEmpty()){
+					message += newLine + "\r\n";
+					newLine = bufferedReader.readLine();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			master.groupText(groupName, message, server.getClient().getUserName());
+			
+		}
 		if(nextToken.equals("REFUSE")){
 			processed = true;
 			String groupName = tokens.nextToken();
