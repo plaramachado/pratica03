@@ -6,8 +6,8 @@ import java.util.StringTokenizer;
 
 import server.Server.ServerForker;
 
-public class GroupServer implements ServerForker {
-
+public class GroupServer implements ServerForker {	
+	
 	private BufferedReader bufferedReader;
 	private BufferedWriter bufferedWriter;
 	private Server server;
@@ -25,21 +25,60 @@ public class GroupServer implements ServerForker {
 		boolean processed = false; //if the fork happens
 		StringTokenizer tokens = new StringTokenizer(receivedLine);
 		String nextToken = tokens.nextToken();
+		if(nextToken.equals("REFUSE")){
+			processed = true;
+			String groupName = tokens.nextToken();
+			String clientName = tokens.nextToken();
+			master.refusedClient(clientName, groupName);
+		}
+		if(nextToken.equals("ACCEPT")){
+			processed = true;
+			String groupName = tokens.nextToken();
+			String clientName = tokens.nextToken();
+			master.acceptClient(clientName, groupName);
+		}
 		if(nextToken.equals("JOIN")){
 			processed = true;	
+			String groupName = tokens.nextToken();
+			String clientName = tokens.nextToken();
+			boolean groupExist = master.groupExist(groupName);
+			server.sendMessage(Messages.GROUP_100_TRYING);
+			if(groupExist){
+				server.sendMessage(Messages.GROUP_101_FOUND);
+				master.askEnterGroup(groupName, clientName);
+				server.sendMessage(Messages.GROUP_180_RINGING);
+			} else{
+				server.sendMessage(Messages.GROUP_404_NOT_FOUND);
+			}
+				
 		}
 		if(nextToken.equals("CREATE")){
 			processed = true;
 			String groupName = tokens.nextToken();
-			boolean addNewGroup = master.addNewGroup(groupName);
-			if(addNewGroup) server.sendMessage("CREATEOK " + groupName + " \r\n");
-			if(addNewGroup) server.sendMessage("CREATEERROR " + groupName + " \r\n");
+			boolean addNewGroup = master.addNewGroup(groupName, server.getClient().getUserName());
+			if(addNewGroup) server.sendMessage(Messages.createOk(groupName));
+			if(addNewGroup) server.sendMessage(Messages.createError(groupName));
+		}
+		if(nextToken.equals("CLOSE")){
+			processed = true;
+			String groupName = tokens.nextToken();
+			master.closeGroup("groupName");
+			
+		}
+		if(nextToken.equals("LEAVE")){
+			String groupName = tokens.nextToken();
+			String userName = server.getClient().getUserName();
+			master.clientLeave(groupName, userName);
 		}
 		if(nextToken.equals("GROUPGET")){
 			processed = true;
+			String groupList = master.getGroupList();
+			server.sendMessage(groupList);
 		}
 		return processed;
 	}
+
+
 
 	public void setMaster(MasterGroupServer masterGroupServer) {
 		this.master = masterGroupServer;

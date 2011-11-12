@@ -128,6 +128,20 @@ public class MasterServer {
 		}
 		return false;
 	}
+	
+	public boolean sendMessage(String client, String message) {
+		boolean clientFound =  false;
+		for (int i = 0; i < servers.size(); i++) {
+			RegisteredClient client2 = servers.get(i).getClient();
+			if(client2 != null) clientFound = client2.getUserName().equals(client);
+			if(clientFound){ 
+				servers.get(i).sendMessage(message);
+				return true;
+			}
+			//			servers.get(i).getClient()
+		}
+		return false;
+	}
 
 	public boolean clientOnline(String client) {
 		for (int i = 0; i < clients.size(); i++) {
