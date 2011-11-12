@@ -24,6 +24,7 @@ import client.Client;
 import client.Client.ClientListener;
 import client.Message;
 import client.P2P;
+import client.P2PServer;
 import client.PeerListener;
 import client.model.ClientInfo;
 import client.model.DefaultClientListenerImpl;
@@ -41,6 +42,9 @@ public class ClientFrame extends BaseClientFrame{
 	private ClientListener clientListener;
 	private PeerListener peerListener;
 	
+
+	private P2PServer p2pServer;
+	
 	// Estas classes necessitam de uma instância por chamada
 	private Map<String, ClientInfo> peers;
 	
@@ -53,7 +57,15 @@ public class ClientFrame extends BaseClientFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(700, 500);
 		this.setMinimumSize(new Dimension(700, 500));
-		this.peers = new HashMap<String, ClientInfo>();
+		
+		// Escuta P2P
+		this.peerListener = new DefaultPeerListenerImpl();
+		peerListener.setFrame(this);
+		this.p2pServer = new P2PServer(peerListener);
+		new Thread(this.p2pServer).start();
+		
+		
+		//this.peers = new HashMap<String, ClientInfo>();
 		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
 		this.getCallButton().addActionListener(new CallButtonListener(this));
@@ -61,12 +73,13 @@ public class ClientFrame extends BaseClientFrame{
 		
 		try {
 			this.client = new Client();
-			this.client.setPort(5151 + (int)Math.round(10000*Math.random())); //tiago
+			//this.client.setPort(5151 + (int)Math.round(10000*Math.random())); //tiago
+			this.client.setPort(p2pServer.getLocalPort());
 			this.clientListener = new DefaultClientListenerImpl(this);
 			this.client.setListener(clientListener);
 			
-			this.peerListener = new DefaultPeerListenerImpl();
-			this.client.setP2plistener(peerListener);
+			
+			//this.client.setP2plistener(peerListener);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -117,6 +130,14 @@ public class ClientFrame extends BaseClientFrame{
 
 	public Map<String, ClientInfo> getPeers() {
 		return peers;
+	}
+	
+	public PeerListener getPeerListener() {
+		return peerListener;
+	}
+
+	public void setPeerListener(PeerListener peerListener) {
+		this.peerListener = peerListener;
 	}
 
 	public static void main(String[] args){

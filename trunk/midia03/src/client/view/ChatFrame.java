@@ -26,6 +26,7 @@ import javax.swing.event.InternalFrameListener;
 import util.ObservableArrayList;
 import client.Message;
 import client.P2P;
+import client.model.ClientInfo;
 
 public class ChatFrame extends JInternalFrame implements Observer{
 	private JPanel content;
@@ -35,6 +36,7 @@ public class ChatFrame extends JInternalFrame implements Observer{
 	private String caller;
 	private JButton sendButton;
 	private BaseClientFrame frame;
+	public P2P p2pconnect;
 	
 	
 	public ChatFrame(BaseClientFrame cf){
@@ -145,6 +147,35 @@ public class ChatFrame extends JInternalFrame implements Observer{
 		}
 		
 	}
+
+	@Deprecated
+	public void P2PCreate(P2P connection) {
+		// TODO Auto-generated method stub
+		this.frame.getClient().acceptCall();
+		
+//		ChatFrame c = this.frame.createChatFrame(caller);
+		
+//		Map<String, ClientInfo> peers = this.frame.getPeers();
+		ClientInfo info = new ClientInfo();
+		info.setChatFrame(this);
+		setP2P(connection);
+		connection.requestP2P();
+		System.out.println("CALLED REQUESTP2P FOR SUUUUURE");
+//		connection.requestP2P();
+//		peers.put(caller, info);
+		
+		/* to p2p connection */
+//		Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
+//		System.out.println("caller: "+caller);
+//		connections.get(caller).requestP2P();
+		
+//		this.frame.getCallDialog().dispose();
+	}
+
+	public void setP2P(P2P connection) {
+		// TODO Auto-generated method stub
+		this.p2pconnect = connection;
+	}
 	
 }
 
@@ -188,14 +219,11 @@ class EnterHitHandler implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		// TODO enviar a mensagem para o cliente
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			
-			Map<String, P2P> m = 
-			this.chatFrame.getFrame().getClient().getConnectionsP2P();
-			P2P peer = m.get(chatFrame.getCaller());
-			String msg = chatFrame.getMessageTextArea().getText();
-			peer.sendMessage(new Message(msg));
+
+			String msg = chatFrame.getMessageTextArea().getText().trim();
+			chatFrame.p2pconnect.sendMessage(msg + "\r\n");
 			chatFrame.getMessageTextArea().setText("");
-			chatFrame.getChatTextArea().append("\n" + chatFrame.getCaller() + ": " + msg);
+			chatFrame.getChatTextArea().append("\nMe: " + msg);
 			
 		}
 		

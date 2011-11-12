@@ -28,7 +28,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 	@Override
 	public void registerError() {
 
-		JOptionPane.showMessageDialog(null, "Erro registering user");
+		JOptionPane.showMessageDialog(frame, "Erro registering user");
 
 	}
 
@@ -54,12 +54,17 @@ public class DefaultClientListenerImpl implements ClientListener {
 		
 		if(answer == JOptionPane.YES_OPTION){
 			this.frame.getClient().acceptCall();
-			ChatFrame c = this.frame.createChatFrame(caller);
 			
-			Map<String, ClientInfo> peers = this.frame.getPeers();
-			ClientInfo info = new ClientInfo();
-			info.setChatFrame(c);
-			peers.put(caller, info);
+			//ChatFrame c = this.frame.createChatFrame(caller);
+			
+			//P2P p2p = new P2P("localhost", frame.getClient().getPort());
+			//c.setP2P(p2p);
+			//p2p.receiveP2P();
+			
+			//Map<String, ClientInfo> peers = this.frame.getPeers();
+			//ClientInfo info = new ClientInfo();
+			//info.setChatFrame(c);
+			//peers.put(caller, info);
 			
 			/* to p2p connection */
 		//	Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
@@ -95,23 +100,28 @@ public class DefaultClientListenerImpl implements ClientListener {
 	}
 
 	@Override
-	public void callCompleted(String caller) {
+	public void callCompleted(String ip, int port, String callerName) {
 		// TODO Quer dize que é aqui que vai a mágica, seu Silvio?
 		// Adicionar a abertura dos sockets e tal
 		//this.frame.createChatFrame(caller);
 		
 		this.frame.getClient().acceptCall();
-		ChatFrame c = this.frame.createChatFrame(caller);
 		
-		Map<String, ClientInfo> peers = this.frame.getPeers();
-		ClientInfo info = new ClientInfo();
-		info.setChatFrame(c);
-		peers.put(caller, info);
+		// TODO - Adicionar Ip e porta
+		P2P p2p = new P2P(ip, port, this.frame.getPeerListener());
+		p2p.setRemotePeerName(callerName);
+		p2p.requestP2P();
+		//ChatFrame c = this.frame.createChatFrame(caller);
 		
+//		Map<String, ClientInfo> peers = this.frame.getPeers();
+//		ClientInfo info = new ClientInfo();
+//		info.setChatFrame(c);
+//		peers.put(caller, info);
+//		
 		/* to p2p connection */
-		Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
-		System.out.println("caller: "+caller);
-		connections.get(caller).requestP2P();
+		//Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
+		//System.out.println("caller: "+caller);
+		//connections.get(caller).requestP2P();
 		
 		this.frame.getCallDialog().dispose();
 

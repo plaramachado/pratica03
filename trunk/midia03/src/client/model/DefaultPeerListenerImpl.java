@@ -1,28 +1,37 @@
 package client.model;
 
+import java.util.Map;
+
 import client.Client;
+import client.MessageListener;
 import client.P2P;
 import client.PeerListener;
+import client.view.ChatFrame;
+import client.view.ClientFrame;
 
 public class DefaultPeerListenerImpl implements PeerListener{
+	
+	private ClientFrame frame;
 
 	@Override
-	public void gotP2P(Client host, String ip, int port) {
-		// TODO Auto-generated method stub
-		
-		System.out.println("last client: " + host.getLastClient());
-		P2P connection = new P2P(ip,port);
-		host.getConnectionsP2P().put(host.getLastClient(), connection);
-		new Receiver(connection).start();
+	public void setFrame(ClientFrame clientFrame) {
+
+		this.frame = clientFrame;
 	}
 
-}
-class Receiver extends Thread {
-	P2P connection;
-	Receiver (P2P connection){
-		this.connection = connection;
-	}
-	public void run(){
-		connection.receiveP2P();
-	}
+	@Override
+	/**
+	 * Chamado quando uma nova conexão é estabelecida,
+	 * não importa qual das partes iniciou.
+	 * É responsável por criar as janelas de chat
+	 * */
+	public void gotP2P(P2P peer) {
+		// OK, temos um nó aqui =P
+		ChatFrame c = frame.createChatFrame("unknown");
+		MessageListener ml = new DefaultMessageListenerImpl(c);
+		peer.setMessageListener(ml);
+		c.setP2P(peer);
+		
+	}		
+
 }
