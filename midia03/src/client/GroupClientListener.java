@@ -63,4 +63,6 @@ public interface GroupClientListener{
 	 */
 	void groupEnded(String groupName);
 
+	void textArrives(String groupName, String clientName, String msg);
+
 }

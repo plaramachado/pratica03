@@ -49,6 +49,15 @@ public class Messages {
 	public static String leave(String groupJoined) {
 		return "LEAVE " + groupJoined + " \r\n";
 	}
+
+	public static String groupText(String groupJoined, String message) {
+		return "GROUPTEXT " + groupJoined + " \r\n" + message+ " \r\n\r\n";
+	}
+
+	public static String groupTextRepass(String groupName, String message,
+			String userName) {
+		return "TEXTGROUP " + groupName + " " + userName+ " \r\n" + message+ " \r\n\r\n";
+	}
 	
 	
 

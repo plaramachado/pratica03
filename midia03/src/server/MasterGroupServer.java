@@ -172,4 +172,14 @@ public class MasterGroupServer {
 		}
 			
 	}
+
+	public void groupText(String groupName, String message, String userName) {
+		String msg = Messages.groupTextRepass(groupName, message, userName);
+		Group group = getGroup(groupName); //finds the group
+		ArrayList<String> clientNames = group.getClientNames();
+		for (int i = 0; i < clientNames.size(); i++) { //repass to all clients in the group
+			String clientName = clientNames.get(i);
+			masterServer.sendMessage(clientName, msg);
+		}
+	}
 }
