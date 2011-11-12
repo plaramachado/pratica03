@@ -1,7 +1,15 @@
 package server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import server.view.ServerFrame;
+
+/**
+ * @author Pedro
+ * Call the main method here
+ * or Instantiate masterServer and then just instantiate this guy
+ */
 public class MasterGroupServer {
 	
 	ArrayList<GroupServer> groupServers = new ArrayList<GroupServer>();
@@ -129,5 +137,15 @@ public class MasterGroupServer {
 		Group group = getGroup(groupName);
 		group.removeClient(userName);
 		updateGroupParticipants(groupName);
+	}
+	
+	public static void main(String[] args) throws IOException{
+		MasterServer m = new MasterServer();
+		ServerFrame s = new ServerFrame();
+		m.setListener(s.getListener());
+		m.listen();
+		
+		MasterGroupServer mg = new MasterGroupServer(m);
+		
 	}
 }
