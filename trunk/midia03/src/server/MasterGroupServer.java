@@ -210,7 +210,15 @@ public class MasterGroupServer {
 			e.printStackTrace();
 		}
 		if(main == 0) System.out.println("BAD PORT SERVER");
-		Messages.videoGo(groupName, main);
+		String videoGo = Messages.videoGo(groupName, main);
+		Group group = getGroup(groupName);
+		ArrayList<String> clientNames = group.getClientNames();
+		for (int i = 0; i < clientNames.size(); i++) {
+			String clientName = clientNames.get(i);
+			if(!clientName.equals(client.getUserName())){
+				masterServer.sendMessage(clientName, videoGo);
+			}
+		}
 		// TODO Auto-generated catch block
 	}
 }
