@@ -3,16 +3,23 @@ package client.view;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyVetoException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Key;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -24,6 +31,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import util.ObservableArrayList;
+import client.Client;
 import client.Message;
 import client.P2P;
 import client.model.ClientInfo;
@@ -35,6 +43,10 @@ public class ChatFrame extends JInternalFrame implements Observer{
 	private JPanel chatPanel;
 	private String caller;
 	private JButton sendButton;
+	private JButton playVideoButton;
+	private JButton pauseVideoButton;
+	
+	
 	private BaseClientFrame frame;
 	public P2P p2pconnect;
 	
@@ -48,6 +60,7 @@ public class ChatFrame extends JInternalFrame implements Observer{
 		this.setClosable(true);
 		this.getContentPane().add(this.getChatPanel());
 		this.getMessageTextArea().addKeyListener(new EnterHitHandler(this));
+		this.getPlayVideoButton().addActionListener( new PlayVideoButtonListener(this));
 		this.addInternalFrameListener(new CloseHandler());
 //		try {
 //			this.setMaximum(true);
@@ -95,7 +108,8 @@ public class ChatFrame extends JInternalFrame implements Observer{
 		pane.setMinimumSize(new Dimension(400, 300));
 		
 		c.weighty = 0.9;
-		c.weightx = 1;
+		c.weightx = 2;
+		c.gridwidth = 4;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
@@ -107,18 +121,51 @@ public class ChatFrame extends JInternalFrame implements Observer{
 		
 		c.weighty = 0.1;
 		c.weightx = 1;
+		c.gridwidth = 3;
 		c.gridx = 0;
 		c.gridy = 10;
 		c.fill = GridBagConstraints.BOTH;
 		chatPanel.add(pane, c);
+		
+		// Adiciona o botão de vídeo
+		c.gridx = 3;
+		c.gridy = 10;
+		c.gridwidth = 1;
+		chatPanel.add(this.getPlayVideoButton(), c);
+		
 		
 		chatPanel.setBorder(BorderFactory.createEtchedBorder());
 		
 		return chatPanel;
 	}
 	
+	public JButton getPlayVideoButton() {
+		if(playVideoButton == null){
+			playVideoButton = new JButton();
+			playVideoButton.setIcon(createImageIcon("resources/icons/camera-web.png"));
+			playVideoButton.setToolTipText("Start video stream");
+		}
+		return playVideoButton;
+	}
+	
 	public BaseClientFrame getFrame() {
 		return this.frame;
+		
+	}
+	
+	protected ImageIcon createImageIcon(String path) {
+		
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		InputStream input = classLoader.getResourceAsStream(path);
+		Image logo;
+		try {
+			logo = ImageIO.read(input);
+			return new ImageIcon(logo);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 		
 	}
 	
@@ -233,4 +280,16 @@ class EnterHitHandler implements KeyListener{
 
 	public void keyTyped(KeyEvent e) {}
 	
+}
+
+class PlayVideoButtonListener implements ActionListener{
+	private ChatFrame chatFrame;
+	public PlayVideoButtonListener(ChatFrame c){
+		this.chatFrame = c;
+	}
+    public void actionPerformed(ActionEvent e){
+    	P2P p2p = this.chatFrame.p2pconnect;
+    	p2p.receiveVideo();
+    }
+    
 }
