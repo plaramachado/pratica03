@@ -1,4 +1,5 @@
 package client.view;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -44,8 +45,8 @@ public class BaseClientFrame extends JFrame{
 	
 	// Buttons
 	private JButton registerButton;
-	private JButton playVideoButton;
-	private JButton pauseVideoButton;
+//	private JButton playVideoButton;
+//	private JButton pauseVideoButton;
 	private JButton quitButton;
 	private JButton callButton;
 	private JButton endCallButton;
@@ -78,10 +79,13 @@ public class BaseClientFrame extends JFrame{
 	
 	public BaseClientFrame(String title){
 		super(title);
-		//this.setLayout(new GridLayout(1,1));
-		
-		this.getContentPane().add(this.getMainPanel());
-		this.getChatWindows();
+		//this.setLayout(new GridBagLayout());
+		//GridBagConstraints c = new GridBagConstraints();
+		//c.gridx = 0;
+		//c.gridy = 0;
+		this.getMainPanel().setMinimumSize(new Dimension(400,400));
+		this.getContentPane().add(this.getMainPanel(), BorderLayout.CENTER);
+		//this.getChatWindows();
 		
 		//Tenta alterar o look and feel
 //		try {
@@ -108,22 +112,22 @@ public class BaseClientFrame extends JFrame{
 		
 		return registerButton;
 	}
-	public JButton getPlayVideoButton() {
-		if(playVideoButton == null){
-			playVideoButton = new JButton();
-			playVideoButton.setIcon(createImageIcon("resources/icons/camera-web.png"));
-			playVideoButton.setToolTipText("Start video stream");
-		}
-		return playVideoButton;
-	}
-	public JButton getPauseVideoButton() {
-		if(pauseVideoButton != null) return pauseVideoButton;
-		
-		pauseVideoButton = new JButton();
-		pauseVideoButton.setIcon(createImageIcon("resources/icons/player_pause.png"));
-		pauseVideoButton.setToolTipText("Pause video");
-		return pauseVideoButton;
-	}
+//	public JButton getPlayVideoButton() {
+//		if(playVideoButton == null){
+//			playVideoButton = new JButton();
+//			playVideoButton.setIcon(createImageIcon("resources/icons/camera-web.png"));
+//			playVideoButton.setToolTipText("Start video stream");
+//		}
+//		return playVideoButton;
+//	}
+//	public JButton getPauseVideoButton() {
+//		if(pauseVideoButton != null) return pauseVideoButton;
+//		
+//		pauseVideoButton = new JButton();
+//		pauseVideoButton.setIcon(createImageIcon("resources/icons/player_pause.png"));
+//		pauseVideoButton.setToolTipText("Pause video");
+//		return pauseVideoButton;
+//	}
 	public JButton getQuitButton() {
 		if(quitButton != null) return quitButton;
 		
@@ -155,11 +159,12 @@ public class BaseClientFrame extends JFrame{
 		if(contactsPanel != null) return contactsPanel;
 		
 		JScrollPane scroller = new JScrollPane(this.getContactsList());
-		scroller.setMinimumSize(new Dimension(130, 300));
+		scroller.setMinimumSize(new Dimension(130, 400));
 		
 		contactsPanel = new JPanel();
 		GridBagConstraints c = new GridBagConstraints();
 		
+		c.fill = c.VERTICAL;
 		c.gridx = 0;
 		c.gridy = 0;
 		contactsPanel.setLayout(new GridBagLayout());
@@ -189,17 +194,32 @@ public class BaseClientFrame extends JFrame{
 		if(menuPanel != null) return menuPanel;
 		
 		menuPanel = new JPanel();
-		GridLayout g = new GridLayout(5, 1);
-		g.setVgap(10);
+		//GridLayout g = new GridLayout(15, 1);
+		//g.setVgap(10);
 		
-		menuPanel.setLayout( g );
+		GridBagConstraints c = new GridBagConstraints();
+		menuPanel.setLayout( new GridBagLayout());
 		menuPanel.setBorder(BorderFactory.createEtchedBorder());
+		c.fill = c.VERTICAL;
+		c.insets = new Insets(10, 10, 10, 10);
+		c.gridx = 0;
+		c.gridy = 0;
+		menuPanel.add(this.getRegisterButton(), c);
 		
-		menuPanel.add(this.getRegisterButton());
+		//c.gridy = 1;
+		//menuPanel.add(this.getPlayVideoButton(), c);
+		//c.gridy = 2;
+		//menuPanel.add(this.getPauseVideoButton(), c);
 		
-		menuPanel.add(this.getPlayVideoButton());
-		menuPanel.add(this.getPauseVideoButton());
-		menuPanel.add(this.getQuitButton());
+		c.gridy = 1;
+		menuPanel.add(this.getQuitButton(), c);
+		
+		c.gridy = 2;
+		c.fill  = c.BOTH;
+		c.weighty = 10;
+		c.gridheight = 40;
+		c.ipady = 300;
+		menuPanel.add(new JPanel(), c);
 		
 		return menuPanel;
 	}
@@ -212,7 +232,8 @@ public class BaseClientFrame extends JFrame{
 		GridBagLayout l = new GridBagLayout();
 		mainPanel.setLayout(l);
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.BOTH;
+		
 		c.weightx = 0.1;
 		c.gridx = 0;
 		c.gridy = 0;
@@ -221,14 +242,16 @@ public class BaseClientFrame extends JFrame{
 		c.weightx = 0.65;
 		c.gridx = 1;
 		c.gridy = 0;
+		
 		//c.fill = GridBagConstraints.HORIZONTAL;
-		c.fill = GridBagConstraints.BOTH;
+		//c.fill = GridBagConstraints.BOTH;
 		//c.gridwidth = 5;
 		mainPanel.add(this.getChatPanel(), c);
+		c.ipady = 0;
 		
 		c.gridx = 2;
 		c.gridy = 0;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		//c.fill = GridBagConstraints.BOTH;
 		c.weightx = 0.25;
 		mainPanel.add(this.getContactsPanel(), c);
 		
@@ -260,7 +283,8 @@ public class BaseClientFrame extends JFrame{
 		return contactsList;
 	}
 	
-
+	
+	@Deprecated
 	public Map<String, JInternalFrame> getChatWindows() {
 		if(chatWindows != null) return chatWindows;
 		
@@ -279,7 +303,7 @@ public class BaseClientFrame extends JFrame{
 		c.setTitle("Chat with " + caller);
 		c.setVisible(true);
 		c.moveToFront();
-		c.setSize(100, 100);
+		c.setSize(400, 400);
 		c.setCaller(caller);
 		//this.chatWindows.put(caller, c  );
 		this.getChatPanel().add(c);

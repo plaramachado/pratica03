@@ -111,24 +111,33 @@ class P2PServerThread implements Runnable{
 			}
 			
 			P2P p = new P2P(this.listener);
+			
+			// Send back the RSTP port we are going to listen
+			this.bufferedWriter.append(responseP2P(p.getLocalRTSPPort())) ;
+			this.bufferedWriter.flush();
+			
+			
 			p.setSendMessagePort(sendMessagePort);
 			p.setRemoteRTSPPort(sendRTSPPort);
 			p.setRemoteIP(peer.getInetAddress().getHostAddress());
 			p.startBuffers();
-			System.out.println("P2PServer: iniciado novo PEER");
-			//listener.gotP2P(p);
 			
-			//responseP2P();
+			
+			
+			System.out.println("P2PServer: iniciado novo PEER");
+			
+			
+			
 			//startTextAndVideoServers(); //dei certo, vou iniciar
 		} catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 	
-	public void responseP2P(){
+	public String responseP2P(int receiveRTSPPort){
 		String wResponse = "SETUPOK \r\n";
-		
-		//wResponse += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
+		wResponse += "porRTSP: " + String.valueOf(receiveRTSPPort) + "\r\n";
+		return wResponse;
 	}
 	
 }

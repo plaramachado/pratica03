@@ -46,6 +46,7 @@ public class ClientFrame extends BaseClientFrame{
 	private P2PServer p2pServer;
 	
 	// Estas classes necessitam de uma instância por chamada
+	@Deprecated
 	private Map<String, ClientInfo> peers;
 	
 
@@ -69,7 +70,7 @@ public class ClientFrame extends BaseClientFrame{
 		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
 		this.getCallButton().addActionListener(new CallButtonListener(this));
-		this.getPlayVideoButton().addActionListener(new PlayVideoButtonListener(this));
+		//this.getPlayVideoButton().addActionListener(new PlayVideoButtonListener(this));
 		
 		try {
 			this.client = new Client();
@@ -249,16 +250,4 @@ class CallButtonListener extends BaseListener{
 	}
 	
 }
-class PlayVideoButtonListener extends BaseListener{
-	public PlayVideoButtonListener(ClientFrame c){
-		super(c);
-	}
-    public void actionPerformed(ActionEvent e){
-    	Client c = this.getFrame().getClient();
-    	String s = this.getFrame().getContactsList().getSelectedValue().toString();
 
-    	P2P p2p = c.getConnectionsP2P().get(s);
-    	p2p.receiveVideo();
-    }
-    
-}
