@@ -9,11 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Key;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,19 +19,15 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import util.ObservableArrayList;
-import client.Client;
 import client.Message;
 import client.P2P;
-import client.model.ClientInfo;
 
 public class ChatFrame extends JInternalFrame implements Observer{
 	private JPanel content;
@@ -193,30 +186,6 @@ public class ChatFrame extends JInternalFrame implements Observer{
 			System.out.println(caller + " says " + l.iterator().next());
 		}
 		
-	}
-
-	@Deprecated
-	public void P2PCreate(P2P connection) {
-		// TODO Auto-generated method stub
-		this.frame.getClient().acceptCall();
-		
-//		ChatFrame c = this.frame.createChatFrame(caller);
-		
-//		Map<String, ClientInfo> peers = this.frame.getPeers();
-		ClientInfo info = new ClientInfo();
-		info.setChatFrame(this);
-		setP2P(connection);
-		connection.requestP2P();
-		System.out.println("CALLED REQUESTP2P FOR SUUUUURE");
-//		connection.requestP2P();
-//		peers.put(caller, info);
-		
-		/* to p2p connection */
-//		Map<String, P2P> connections = this.frame.getClient().getConnectionsP2P();
-//		System.out.println("caller: "+caller);
-//		connections.get(caller).requestP2P();
-		
-//		this.frame.getCallDialog().dispose();
 	}
 
 	public void setP2P(P2P connection) {

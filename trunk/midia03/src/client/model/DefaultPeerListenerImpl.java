@@ -32,6 +32,7 @@ public class DefaultPeerListenerImpl implements PeerListener{
 		peer.setMessageListener(ml);
 		c.setP2P(peer);
 		
+		
 	}		
 
 }

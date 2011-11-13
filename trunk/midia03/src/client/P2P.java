@@ -87,8 +87,9 @@ public class P2P extends Thread{
 	// inicia o servidor de vídeo
 	private P2P(){
 		this.localVideoServer = new P2PVideoServer();
-		System.out.println("P2P: Criado o servidor de video local");
+		
 		this.setLocalRTSPPort(this.localVideoServer.getLocalRTSPPort());
+		System.out.println("P2P: Criado o servidor de video local, escutando na porta " + this.localVideoServer.getLocalRTSPPort());
 		
 		
 	}
@@ -116,7 +117,7 @@ public class P2P extends Thread{
 			wRequest += "porRTSP: " + String.valueOf(getLocalRTSPPort()) + "\r\n";
 			try {
 				
-				System.out.println("REMOTE IP:" + remoteIP + ", REMOTE PORT: " + remotePort + " ON REQUESTP2P");
+				//System.out.println("REMOTE IP:" + remoteIP + ", REMOTE PORT: " + remotePort + " ON REQUESTP2P");
 				tcpConnection= new Socket(remoteIP, remotePort);
 				BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(tcpConnection.getOutputStream()));
 				writer.append(wRequest);

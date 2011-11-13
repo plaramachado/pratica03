@@ -51,12 +51,13 @@ public class P2PVideoServer implements Observer{
 	 * Inicia o socket de escuta das requisições RSTP.
 	 * */
 	public P2PVideoServer(){
-		this.localRTSPport = localRTSPPort;
+		//this.localRTSPport = localRTSPPort;
 		try {
 			listenSocket = new ServerSocket(0);
 		} catch (IOException e) {
 			System.out.println("Error: could not start listening on port " + localRTSPport + ": " + e.getMessage());			
 		}
+		System.out.println("P2PServerVideo listening on port " + listenSocket.getLocalPort());
 
 		try {
 			this.localIP = InetAddress.getLocalHost().getHostAddress();			
@@ -66,6 +67,15 @@ public class P2PVideoServer implements Observer{
 			e1.printStackTrace();
 			
 		}
+		
+		Thread t = new Thread(){
+			public void run() {
+				waitForRTSPClient(); // Inicia a repecção em outra thread
+			}
+		};
+		
+		t.start();
+		
 		
 	}
 
