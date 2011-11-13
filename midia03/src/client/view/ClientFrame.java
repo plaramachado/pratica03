@@ -1,32 +1,20 @@
 package client.view;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JList;
 import javax.swing.ListModel;
 
-import util.ObservableArrayList;
-
 import client.Client;
 import client.Client.ClientListener;
-import client.Message;
-import client.P2P;
 import client.P2PServer;
 import client.PeerListener;
-import client.model.ClientInfo;
 import client.model.DefaultClientListenerImpl;
 import client.model.DefaultPeerListenerImpl;
 
@@ -44,10 +32,6 @@ public class ClientFrame extends BaseClientFrame{
 	
 
 	private P2PServer p2pServer;
-	
-	// Estas classes necessitam de uma instância por chamada
-	@Deprecated
-	private Map<String, ClientInfo> peers;
 	
 
 	/**
@@ -107,32 +91,24 @@ public class ClientFrame extends BaseClientFrame{
 		return callDialog;
 	}
 
-	public void updateContactList(ArrayList<String> contactList){
-		JList l = this.getContactsList();
-		l.removeAll();
-		ListModel m = l.getModel();
-		
-		
-		for(int i=0; i<contactList.size(); i++){
-			
-		}
-		//l.repaint();
-		this.pack();
-	}
+//	public void updateContactList(ArrayList<String> contactList){
+//		JList l = this.getContactsList();
+//		l.removeAll();
+//		ListModel m = l.getModel();
+//		
+//		System.out.println("ON UPDATE CONTACT LIST");
+//		for(int i=0; i<contactList.size(); i++){
+//			
+//		}
+//		//l.repaint();
+//		this.pack();
+//	}
 
 
 	public Client getClient(){
 		return this.client;
 	}
-	
-	public void setPeers(Map<String, ClientInfo> peers) {
-		this.peers = peers;
-	}
-
-	public Map<String, ClientInfo> getPeers() {
-		return peers;
-	}
-	
+		
 	public PeerListener getPeerListener() {
 		return peerListener;
 	}
@@ -183,6 +159,8 @@ class RegisterButtonListener extends BaseListener{
 		// Prompt user for login and password
 		LoginDialog l = new LoginDialog(this.getFrame());
 		l.setLocationRelativeTo(this.getFrame());
+		l.setVisible(true);
+		l.setModal(true);
 		l.pack();
 		//System.out.println("Event fired");
 		
@@ -202,18 +180,10 @@ class RegisterListener extends BaseListener{
 	public void actionPerformed(ActionEvent e) {
 		
 		Client c = this.getFrame().getClient();
-		
-		// Fasten seat belt. Doing risky things here.
-		//Component tf = (Component)(e.getSource());
-		
-		LoginDialog l = this.getFrame().getLoginDialog();
-		
-		
+		LoginDialog l = this.getFrame().getLoginDialog();		
 		c.setUserName(l.getLoginField().getText());
-		c.setPassword(l.getPwdField().getText());
-		
-		c.register();
-		
+		c.setPassword(l.getPwdField().getText());		
+		c.register();		
 		this.getFrame().setTitle("iChat - " + l.getLoginField().getText());
 		
 	}
@@ -230,8 +200,6 @@ class CallButtonListener extends BaseListener{
 	public void actionPerformed(ActionEvent arg0) {
 		String s = this.getFrame().getContactsList().getSelectedValue().toString();
 		Client c = this.getFrame().getClient();
-		
-		
 		CallDialog l = new CallDialog(this.getFrame());
 		this.getFrame().setCallDialog(l);
 		l.setLocationRelativeTo(this.getFrame());
@@ -239,12 +207,6 @@ class CallButtonListener extends BaseListener{
 		l.setTitle("Call to " + s);
 		l.setVisible(true);
 		l.pack();
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		c.call(s);
 		
 	}
