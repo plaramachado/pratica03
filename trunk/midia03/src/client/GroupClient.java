@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import server.Messages;
-import videoConference.ClientVideo;
-import videoConference.ServerVideo;
+import video.conference.ClientVideo;
+import video.conference.ServerVideo;
 import client.Client.ClientForker;
 
 /**
