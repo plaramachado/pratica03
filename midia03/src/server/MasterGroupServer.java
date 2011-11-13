@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import javax.swing.RepaintManager;
 
 import server.view.ServerFrame;
-import videoConference.RepassClient;
+import video.conference.RepassClient;
 
 /**
  * @author Pedro
