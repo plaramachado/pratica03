@@ -99,8 +99,8 @@ public class MasterGroupServer {
 		group.setName(groupName);
 		group.setOwner(owner);
 		group.addClient(owner);
-		updateGroupParticipants(groupName);
 		groups.add(group);
+		updateGroupParticipants(groupName);
 		return true;
 	}
 
