@@ -42,8 +42,8 @@ public class Messages {
 		return "ACCEPT " + myGroupName + " " + clientName+ " \r\n";
 	}
 
-	public static String requestJoin(String groupName) {
-		return "JOIN " + groupName + " \r\n";
+	public static String requestJoin(String groupName, String client) {
+		return "JOIN " + groupName + " " + client + " \r\n";
 	}
 
 	public static String leave(String groupJoined) {

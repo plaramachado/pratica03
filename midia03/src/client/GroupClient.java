@@ -160,7 +160,7 @@ public class GroupClient implements ClientForker{
 	}
 	
 	public void requestJoin(String groupName){
-		String msg = Messages.requestJoin(groupName);
+		String msg = Messages.requestJoin(groupName, client.getUserName());
 		client.sendMessage(msg);
 	}
 	
