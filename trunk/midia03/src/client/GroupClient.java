@@ -257,5 +257,9 @@ public class GroupClient implements ClientForker{
 			
 		}
 	};
+	
+//	public static void main(String[] args){
+//		
+//	}
 
 }

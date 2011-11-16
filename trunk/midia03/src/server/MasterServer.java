@@ -59,6 +59,10 @@ public class MasterServer {
 	public void setListener(MasterListener listener) {
 		this.listener = listener;
 	}
+	
+	public void setGroupMaster(MasterGroupServer groupMaster) {
+		this.groupMaster = groupMaster;
+	}
 
 	private void updateClients() {
 		String clientsMessage = "CLIENTS \r\n";
@@ -99,6 +103,7 @@ public class MasterServer {
 						server.setMaster(MasterServer.this);
 						servers.add(server);
 						server.setListener(lis);
+						System.out.println("groupMaster is null?" + groupMaster);
 						if(groupMaster != null) groupMaster.newServer(server);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block

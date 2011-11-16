@@ -22,6 +22,7 @@ public class MasterGroupServer {
 	public MasterGroupServer(MasterServer masterServer) {
 		super();
 		this.masterServer = masterServer;
+		masterServer.setGroupMaster(this);
 	}
 
 	public static class Group{
@@ -87,6 +88,7 @@ public class MasterGroupServer {
 	public void newServer(Server server) {
 		GroupServer groupServer = new GroupServer(server);
 		groupServer.setMaster(this);
+		server.setForker(groupServer);
 		groupServers.add(groupServer);
 	}
 
@@ -166,9 +168,8 @@ public class MasterGroupServer {
 		MasterServer m = new MasterServer();
 		ServerFrame s = new ServerFrame();
 		m.setListener(s.getListener());
-		m.listen();
-
 		MasterGroupServer mg = new MasterGroupServer(m);
+		m.listen();
 
 	}
 

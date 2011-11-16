@@ -86,6 +86,7 @@ public class Server {
 			try {
 				newLine = bufferedReader.readLine();
 				while(newLine.trim().isEmpty()) newLine = bufferedReader.readLine();
+				System.out.println("Forking status " + forker);
 				if(forker != null){ 
 					boolean forked = forker.fork(newLine); //tries to fork the newLine
 					if(forked) continue;  //if it did fork, go back to the while, ignores this newLine
