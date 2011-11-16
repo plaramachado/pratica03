@@ -46,13 +46,12 @@ public class BaseClientFrame extends JFrame{
 	
 	// Buttons
 	private JButton registerButton;
-//	private JButton playVideoButton;
-//	private JButton pauseVideoButton;
 	private JButton quitButton;
 	private JButton callButton;
 	private JButton endCallButton;
 	private JButton callGroupButton;
 	private JButton createGroupButton;
+	private JButton refreshGroupsButton;
 	
 	// Panels
 	private JPanel contactsPanel;
@@ -122,22 +121,7 @@ public class BaseClientFrame extends JFrame{
 		
 		return registerButton;
 	}
-//	public JButton getPlayVideoButton() {
-//		if(playVideoButton == null){
-//			playVideoButton = new JButton();
-//			playVideoButton.setIcon(createImageIcon("resources/icons/camera-web.png"));
-//			playVideoButton.setToolTipText("Start video stream");
-//		}
-//		return playVideoButton;
-//	}
-//	public JButton getPauseVideoButton() {
-//		if(pauseVideoButton != null) return pauseVideoButton;
-//		
-//		pauseVideoButton = new JButton();
-//		pauseVideoButton.setIcon(createImageIcon("resources/icons/player_pause.png"));
-//		pauseVideoButton.setToolTipText("Pause video");
-//		return pauseVideoButton;
-//	}
+
 	public JButton getQuitButton() {
 		if(quitButton != null) return quitButton;
 		
@@ -152,7 +136,6 @@ public class BaseClientFrame extends JFrame{
 		callButton = new JButton();
 		callButton.setIcon(createImageIcon("resources/icons/call-start.png"));
 		callButton.setToolTipText("Call selected");
-		//callButton.addActionListener(new BaseCallButtonListener(this));
 		return callButton;
 	}
 
@@ -174,6 +157,13 @@ public class BaseClientFrame extends JFrame{
 		return createGroupButton;
 	}
 	
+	public JButton getRefreshGroupsButton(){
+		if(this.refreshGroupsButton != null) return refreshGroupsButton;
+		
+		refreshGroupsButton = new JButton("R");
+		return refreshGroupsButton;
+	}
+	
 	public JPanel getContactsPanel() {
 		if(contactsPanel != null) return contactsPanel;
 		
@@ -182,6 +172,8 @@ public class BaseClientFrame extends JFrame{
 		scroller.setSize(new Dimension(100, 400));
 		
 		contactsPanel = new JPanel();
+		contactsPanel.setMinimumSize(new Dimension(100,100));
+		contactsPanel.setSize(new Dimension(100,100));
 		contactsPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -216,6 +208,11 @@ public class BaseClientFrame extends JFrame{
 		c.gridy = 3;
 		c.insets = new Insets(10, 0, 0, 0);
 		contactsPanel.add(this.getCreateGroupButton(), c);
+		
+		c.gridx = 0;
+		c.gridy = 4;
+		c.insets = new Insets(10, 0, 0, 0);
+		contactsPanel.add(this.getRefreshGroupsButton(), c);
 		
 		return contactsPanel;
 	}
