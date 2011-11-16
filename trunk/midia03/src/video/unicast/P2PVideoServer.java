@@ -26,36 +26,23 @@ import java.util.List;
 
 public class P2PVideoServer implements Observer{
 
-	//private InetAddress clientIPAddress; //Client IP address
-	//private int RTPDestinationPort = 0; //destination port for RTP packets  (given by the RTSP Client)
 	//private Socket client;
-	private int localRTSPport;
-	
-	
-	
-	
-	private String localIP;
-	
-	private ServerSocket listenSocket = null;
-
-	// Mapeamento de threads para numeros de linha da tabela
-	
-	
+	private int localRTSPport;	
+	private String localIP;	
+	private ServerSocket listenSocket = null;	
 	private int localRTSPPort;
-
-
-	
-	
+	private List<RTSPThread> threads; // Todas as threads iniciadas por este servidor
 
 	/**
 	 * Inicia o socket de escuta das requisições RSTP.
 	 * */
 	public P2PVideoServer(){
-		//this.localRTSPport = localRTSPPort;
+		
+		threads = new ArrayList<RTSPThread>();
 		try {
 			listenSocket = new ServerSocket(0);
 		} catch (IOException e) {
-			System.out.println("Error: could not start listening on port " + localRTSPport + ": " + e.getMessage());			
+			System.out.println("P2PVideoServer Error: could not start listening: " + e.getMessage());			
 		}
 		System.out.println("P2PServerVideo listening on port " + listenSocket.getLocalPort());
 
@@ -82,38 +69,6 @@ public class P2PVideoServer implements Observer{
 	
 	// FIM MOD 3.01
 
-
-	//------------------------------------
-	//main
-	//------------------------------------
-	public static void main(String argv[]) throws Exception{
-
-		// MOD 3.02
-		// Pede a porta caso o usuario nao tenha digitado na linha de comando
-		int port = 0;
-		if(argv.length == 0){
-			String cmdPort = 
-				JOptionPane.showInputDialog(null, null, "Enter listening port for the server", JOptionPane.QUESTION_MESSAGE);
-
-			if(cmdPort == null || cmdPort.equals(""))
-				cmdPort = "12345";
-			port = Integer.parseInt(cmdPort);
-		}else{
-			port = Integer.parseInt(argv[0]);
-		}
-		// FIM MOD 3.02
-
-
-		//create a Server object
-		P2PVideoServer theServer = new P2PVideoServer();
-		System.out.println("LISTEN PORT: " + theServer.getLocalRTSPPort());
-		theServer.setPort(port);
-
-		
-		theServer.waitForRTSPClient();
-
-	}
-
 	// MOD 2.01
 	// Laco para aceitar conexoes dos clientes
 	// e delegar o tratamento de cada uma das conexoes 
@@ -126,6 +81,7 @@ public class P2PVideoServer implements Observer{
 			try {
 				client = listenSocket.accept();
 				RTSPThread t = new RTSPThread(client);
+				threads.add(t); 
 				t.addObserver(this);
 				new Thread( t ).start();
 				
@@ -149,6 +105,14 @@ public class P2PVideoServer implements Observer{
 	}
 	
 	// FIM MOD 3.02
+	
+	public void endConnection() throws IOException{
+		for(RTSPThread t: threads){
+			t.endConnection();
+		}
+		listenSocket.close();
+		
+	}
  
 	
 

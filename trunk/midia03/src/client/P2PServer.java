@@ -120,6 +120,10 @@ class P2PServerThread implements Runnable{
 			p.setSendMessagePort(sendMessagePort);
 			p.setRemoteRTSPPort(sendRTSPPort);
 			p.setRemoteIP(peer.getInetAddress().getHostAddress());
+			p.setControlConnection(peer);
+			p.setControlReader(bufferedReader);
+			p.setControlWriter(bufferedWriter);
+			
 			p.startBuffers();
 			
 			

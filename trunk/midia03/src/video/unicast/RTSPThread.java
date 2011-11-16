@@ -281,6 +281,14 @@ public class RTSPThread extends Observable implements Runnable{
 	}
 	
 	// FIM MOD 1.02
+	// TODO - talvez marcar como syncronized
+	public void endConnection() throws IOException{
+		this.quit = true;
+		RTSPBufferedReader.close();
+		RTSPBufferedWriter.close();
+		RTSPsocket.close();
+		
+	}
 
 }
 

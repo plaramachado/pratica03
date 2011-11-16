@@ -1,5 +1,6 @@
 package client.view;
 
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +18,9 @@ public class CallDialog extends JDialog{
 	private JTextArea label;
 	
 	public CallDialog(ClientFrame frame) {
+		
+		//super(frame, Dialog.ModalityType.DOCUMENT_MODAL);
+		
 		this.frame = frame;
 		
 		this.setContentPane(this.getPanel());
