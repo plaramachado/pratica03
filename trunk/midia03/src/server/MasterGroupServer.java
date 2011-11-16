@@ -28,7 +28,7 @@ public class MasterGroupServer {
 	public static class Group{
 		String name;
 		String owner;
-		ArrayList<String> clientNames;
+		ArrayList<String> clientNames = new ArrayList<String>();
 		boolean videoPassing = false;
 
 		public void setVideoPassing(boolean videoPassing) {
