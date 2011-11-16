@@ -90,6 +90,11 @@ public class BaseClientFrame extends JFrame{
 		//c.gridy = 0;
 		this.getMainPanel().setMinimumSize(new Dimension(400,400));
 		this.getContentPane().add(this.getMainPanel(), BorderLayout.CENTER);
+		this.getCallButton().setEnabled(false);
+		this.getCallGroupButton().setEnabled(false);
+		this.getQuitButton().setEnabled(false);
+		this.getCreateGroupButton().setEnabled(false);
+		
 		//this.getChatWindows();
 		
 		//Tenta alterar o look and feel
@@ -218,7 +223,7 @@ public class BaseClientFrame extends JFrame{
 	
 	
 	
-	private JButton getCallGroupButton() {
+	public JButton getCallGroupButton() {
 		if(this.callGroupButton != null) return callGroupButton;
 		callGroupButton = new JButton();
 		callGroupButton.setIcon(createImageIcon("resources/icons/call-start.png"));

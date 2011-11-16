@@ -66,7 +66,8 @@ public class ClientFrame extends BaseClientFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String groupName = JOptionPane.showInputDialog("Enter group name:");
-				groupClient.createGroup(groupName);
+				if(groupName != null)
+					groupClient.createGroup(groupName);
 				
 			}
 		});
@@ -178,6 +179,10 @@ class RegisterButtonListener extends BaseListener{
 		l.setVisible(true);
 		l.setModal(true);
 		l.pack();
+		this.getFrame().getCallButton().setEnabled(true);
+		this.getFrame().getQuitButton().setEnabled(true);
+		this.getFrame().getCreateGroupButton().setEnabled(true);
+		this.getFrame().getCreateGroupButton().setEnabled(true);
 		//System.out.println("Event fired");
 		
 	}
