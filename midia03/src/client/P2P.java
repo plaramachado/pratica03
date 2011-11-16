@@ -4,16 +4,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 import util.ObservableArrayList;
-import video.old.Client;
-import video.old.Server;
 import video.unicast.P2PVideoClient;
 import video.unicast.P2PVideoServer;
 /**
@@ -24,12 +20,14 @@ public class P2P extends Thread{
 	
 	private String remoteIP;
 	private String remotePeerName;
-	Socket tcpConnection; // TCP socket used for control
-	
 	
 	Socket textSocket; // TCP socket to send and receive text messages
-	BufferedWriter bufferedWriter; // Para envio de mensagem
-	BufferedReader bufferedReader; // Paraa recepção de mensagem
+	BufferedWriter textWriter; // Para envio de mensagem
+	BufferedReader textReader; // Paraa recepção de mensagem
+	
+	private Socket controlConnection; // TCP socket used for control
+	private BufferedWriter controlWriter;
+	private BufferedReader controlReader;
 	
 	private P2PVideoServer localVideoServer;
 	private P2PVideoClient localVideoClient;
@@ -46,15 +44,11 @@ public class P2P extends Thread{
 	private int remotePort; 
 	private int localPort;
 	
-	
-	
-	
 	// Listeners de eventos
 	private MessageListener messageListener;
 	private PeerListener peerListener;
 	
 	boolean isConnected = false;
-	List<Message> msgBuffer = new ObservableArrayList<Message>();
 	
 	/**
 	 * Construtor usado quando se deseja um objeto para 
@@ -65,12 +59,6 @@ public class P2P extends Thread{
 		this();
 		this.peerListener = listener;
 	}
-	/**
-	 * Called when the client want to contact the other
-	 * */
-	
-	
-	
 	
 	/**
 	 * Construtor usado quando se deseja que o peer 
@@ -87,11 +75,8 @@ public class P2P extends Thread{
 	// inicia o servidor de vídeo
 	private P2P(){
 		this.localVideoServer = new P2PVideoServer();
-		
 		this.setLocalRTSPPort(this.localVideoServer.getLocalRTSPPort());
 		System.out.println("P2P: Criado o servidor de video local, escutando na porta " + this.localVideoServer.getLocalRTSPPort());
-		
-		
 	}
 	
 	/**
@@ -100,6 +85,17 @@ public class P2P extends Thread{
 	 * */
 	public void requestP2P(){
 		ServerSocket server = null;
+		try {
+			setControlConnection(new Socket(remoteIP, remotePort));
+			startControlBuffers();
+		} catch (UnknownHostException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		if (!isConnected){
 			try {
 				server = new ServerSocket(0); // inicia socket para texto
@@ -110,35 +106,24 @@ public class P2P extends Thread{
 			
 			localMessagePort = server.getLocalPort();
 			localRTSPPort = this.localVideoServer.getLocalRTSPPort();
-			//setLocalRTSPPort(localMessagePort + 2); // TODO tirar isso
 			
 			String wRequest = "SETUP\r\n";
 			wRequest += "portext: " + String.valueOf(localMessagePort) + "\r\n";
 			wRequest += "porRTSP: " + String.valueOf(getLocalRTSPPort()) + "\r\n";
 			try {
 				
-				//System.out.println("REMOTE IP:" + remoteIP + ", REMOTE PORT: " + remotePort + " ON REQUESTP2P");
-				tcpConnection= new Socket(remoteIP, remotePort);
-				BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(tcpConnection.getOutputStream()));
-				writer.append(wRequest);
-				writer.flush();
+				
+				getControlWriter().append(wRequest);
+				getControlWriter().flush();
 				
 				// Obtem a porta para RSTP
-				BufferedReader reader = new BufferedReader(new InputStreamReader(tcpConnection.getInputStream()));
-				String line = reader.readLine();
-				line = reader.readLine();
+				//BufferedReader reader = new BufferedReader(new InputStreamReader(tcpConnection.getInputStream()));
+				String line = getControlReader().readLine();
+				line = getControlReader().readLine();
 				int remotePort = Integer.parseInt(line.substring( line.indexOf(":")+ 1).trim());
 				this.setRemoteRTSPPort(remotePort);
 				System.out.println("HANDSHAKE COMPLETED, REMOTE RTSP PORT = " + remotePort);
-				
-				//startBuffers(tcpConnection);
-				//sendMessage(wRequest);
-				isConnected = true;
-				//TODO SETAR ISCONNECTED PRA TRUE CASO OK
-				//startTextAndVideoServers(); //dei certo, vou iniciar
-				
-
-				
+				isConnected = true;				
 			} catch (Exception e){
 				e.printStackTrace();
 				//endConnection();
@@ -147,7 +132,6 @@ public class P2P extends Thread{
 		}
 		
 		// Espera a conexão do cliente
-		//Socket s;
 		try {
 			textSocket = server.accept();
 			//textSocket = server.accept();
@@ -157,7 +141,51 @@ public class P2P extends Thread{
 			e.printStackTrace();
 		}
 		
+		// Aguarda pelo bye em uma thread separada
+		Thread t = new Thread(){
+			public void run() {
+				// O que fazer quando receber o BYE?]
+				// Fechar a janela de chat
+				// Encerrar Sevidor e Clientes de video
+				// Fechar sockets
+				String line = "";
+				while(true){
+					try {
+						line = getControlReader().readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if( line!=null && line.contains("BYE"))
+						endConnection();
+				}
+				
+//				try{
+//					endConnection();
+//				}catch(Exception e){
+//					e.printStackTrace();
+//				}
+				
+			}
+		};
+		t.start();
 		
+	}
+
+	public void startControlBuffers() throws IOException {
+		setControlWriter(new BufferedWriter( new OutputStreamWriter(getControlConnection().getOutputStream())));
+		setControlReader(new BufferedReader(new InputStreamReader(getControlConnection().getInputStream())));
+	}
+	
+	public void sendBye(){
+		String request = "BYE \r\n";
+		try {
+			getControlWriter().append(request);
+			getControlWriter().flush();
+			this.endConnection();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -169,8 +197,8 @@ public class P2P extends Thread{
 	}
 	
 	private void startBuffers(Socket socket) throws IOException {
-		bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()) );
+		textReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		textWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()) );
 		System.out.println("startBuffers() on client that ACCEPTED the call");
 		peerListener.gotP2P(this);
 		receiveMessageLoop();
@@ -183,28 +211,13 @@ public class P2P extends Thread{
 	public void startBuffers() throws IOException {
 		
 		textSocket = new Socket(this.remoteIP, this.remoteMessagePort);
-		bufferedReader = new BufferedReader(new InputStreamReader(textSocket.getInputStream()));
-		bufferedWriter = new BufferedWriter(new OutputStreamWriter(textSocket.getOutputStream()) );
+		textReader = new BufferedReader(new InputStreamReader(textSocket.getInputStream()));
+		textWriter = new BufferedWriter(new OutputStreamWriter(textSocket.getOutputStream()) );
 		peerListener.gotP2P(this);
 		System.out.println("startBuffers() on client that INITIATED the call");
 		receiveMessageLoop();
 	}
 	
-	public void startTextAndVideoServers(){
-		try {
-			// TODO enviar vídeo
-			sendVideo();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		receiveMessageLoop();
-	}
-	
-	@Deprecated
-	public void requestVideo(){ //request TO SEND a video
-
-	}
 	public void acceptVideo(){ //accept TO RECEIVE a video
 		this.localVideoClient = new P2PVideoClient(getRemoteIP(), getRemoteRTSPPort());
 
@@ -221,41 +234,13 @@ public class P2P extends Thread{
 
 	}
 	
-	@Deprecated
-	public void sendVideo() throws Exception{
-		new Thread ("send video thread") {
-			public void run() {
-				int sessionID = 123456;
-				ServerSocket generalSock;
-				try {
-					generalSock = new ServerSocket(getLocalRTSPPort());
-			        System.out.println("Esperando por cliente...");
-			        
-			        
-		        
-		       // server.serverSocket = generalSock;
-				//localVideoServer.RTSPsocket = generalSock.accept();
-
-		        System.out.println("UsuÃ¡rio conectado ao socket");
-		        //Thread t = new Thread (localVideoServer);
-		        //t.start();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		        
-			}
-		}.start();
-	}
-	
-
 	public void receiveMessageLoop(){
 		new Thread("Receive message thread"){
 			public void run(){
 				try{
 					
 					String line;
-					while((line = bufferedReader.readLine()) != null){ //botar uma condicao decente aqui, tipo isNotDie()
+					while((line = textReader.readLine()) != null){ //botar uma condicao decente aqui, tipo isNotDie()
 						
 						System.out.println("RECEIVED " + line);
 						messageListener.onMessageReceived(line);
@@ -266,43 +251,40 @@ public class P2P extends Thread{
 			}
 		}.start();
 	}
-	
-	/** Gets the oldest message on buffer. 
-	 * 
-	 * @return the Message. Null if empty!
-	 */
-	public Message getMessage(){
-		Message wMessage; 
-		try{
-			wMessage = msgBuffer.remove(0);
-		} catch (Exception e){
-			wMessage = null;
-		}
-		return wMessage;
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
 		
-	}
+	/**
+	 * 
+	 * Free all resources allocated to this call. 
+	 * */
 	private void endConnection() {
-		if(tcpConnection == null) return;
+		System.out.println("INICIANDO ENCERRAMENTO DA CONEXAO");
+		if(getControlConnection() == null) return;
 		try {
-			tcpConnection.close();
+			getControlWriter().close();
+			getControlReader().close();
+			getControlConnection().close();
+			
+			textReader.close();
+			textWriter.close();
+			textSocket.close();
+			
+			localVideoClient.endConnection();
+			localVideoServer.endConnection();
+			
 			isConnected = false;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("CONEXAO ENCERRADA");
 	}
 
 
 
 	public void sendMessage(String clientsMessage) {
 		try {
-			bufferedWriter.append(clientsMessage);
-			bufferedWriter.flush();
+			textWriter.append(clientsMessage);
+			textWriter.flush();
 		} catch (IOException e) {
 		
 			e.printStackTrace();
@@ -346,17 +328,35 @@ public class P2P extends Thread{
 		return messageListener;
 	}
 
-
-
-
 	public void setLocalRTSPPort(int localRTSPPort) {
 		this.localRTSPPort = localRTSPPort;
 	}
 
-
-
-
 	public int getLocalRTSPPort() {
 		return localRTSPPort;
+	}
+
+	public void setControlConnection(Socket controlConnection) {
+		this.controlConnection = controlConnection;
+	}
+
+	public Socket getControlConnection() {
+		return controlConnection;
+	}
+
+	public void setControlWriter(BufferedWriter controlWriter) {
+		this.controlWriter = controlWriter;
+	}
+
+	public BufferedWriter getControlWriter() {
+		return controlWriter;
+	}
+
+	public void setControlReader(BufferedReader controlReader) {
+		this.controlReader = controlReader;
+	}
+
+	public BufferedReader getControlReader() {
+		return controlReader;
 	}
 }

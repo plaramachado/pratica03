@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.Timer;
 
@@ -47,7 +48,7 @@ public class P2PVideoClient{
 
 	//RTSP variables
 	//----------------
-	private static RTSPState state;
+	private RTSPState state;
 	Socket RTSPsocket; //socket used to send/receive RTSP messages
 	//input and output stream filters
 	private BufferedReader RTSPBufferedReader;
@@ -71,18 +72,11 @@ public class P2PVideoClient{
 	public P2PVideoClient(String remoteIP, int remotePort) {
 		this.setRemotePort(remotePort);
 		this.setRemoteIP(remoteIP);
-		//this.remoteIP = new InetAddress(remoteIP);
-		
 
 		//build GUI
 		//--------------------------
-
-		//Frame
-		mainFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
+		
+		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		//Buttons
 		buttonPanel.setLayout(new GridLayout(1,0));
@@ -94,6 +88,15 @@ public class P2PVideoClient{
 		playButton.addActionListener(new PlayButtonListener());
 		pauseButton.addActionListener(new PauseButtonListener());
 		tearButton.addActionListener(new TearButtonListener());
+		tearButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mainFrame.dispose();
+				// perder a referencia para tornar o objeto elegivel para GC
+				mainFrame = null;
+			}
+		});
 
 		//Image display label
 		iconLabel.setIcon(null);
@@ -143,61 +146,8 @@ public class P2PVideoClient{
 		state = RTSPState.INIT;
 	}
 
-	//------------------------------------
-	//main
-	//------------------------------------
-	public static void main(String argv[]) throws Exception {
-		new P2PVideoClient("",0).handle(argv); // Não funciona mais
-	}
+	// Event handlers.
 	
-	
-
-	/**
-	 * 
-	 * Main method.
-	 * @throws IOException 
-	 * */
-	public void handle(String [] argv) throws IOException{
-		
-		// MOD 3.05 
-		// Permite a entrada do endereco do servidor, da porta e do nome
-		// do recurso a ser carregado caso isto não tenha sido feito
-		// via linha de comando.
-//		int RTSPServerPort = 0;
-//		String serverHost = "";
-//		if(argv.length > 1){
-//			RTSPServerPort = Integer.parseInt(argv[1]);
-//			serverHost = argv[0];
-//		}else{
-//			serverHost = JOptionPane.showInputDialog(null, null, "Enter server address", JOptionPane.QUESTION_MESSAGE);
-//			if (serverHost.equals(""))
-//				serverHost = "localhost";
-//			String p = JOptionPane.showInputDialog(null, null, "Enter server listening port", JOptionPane.QUESTION_MESSAGE);
-//			if( p.equals(""))
-//				p = "12345";
-//			RTSPServerPort = Integer.parseInt(p);
-//		}
-
-
-		//InetAddress serverIPAddr = InetAddress.getByName(serverHost);
-
-		//if(argv.length > 2 ){
-//			videoFileName = argv[2];
-//		}else{
-//			videoFileName = JOptionPane.showInputDialog(null, null, "Enter file name", JOptionPane.QUESTION_MESSAGE);
-//			if(videoFileName.equals(""))
-//				videoFileName = "movie.mjpeg";
-//		}
-
-		// FIM MOD 3.5
-
-
-		//Establish a TCP connection with the server to exchange RTSP messages
-		//------------------
-
-	}  
-
-
 	class SetupButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
 
@@ -206,21 +156,17 @@ public class P2PVideoClient{
 			if (state == RTSPState.INIT){
 				//Init non-blocking RTPsocket that will be used to receive data
 				try{
-					
 					// MOD 2.03
 					RTPSocket = new DatagramSocket(0);
 					rtpRcvPort = RTPSocket.getLocalPort();
-					System.out.println("Starting rvc socket at port " + rtpRcvPort);
+					System.out.println("Video client: Recovering video at port " + rtpRcvPort);
 					RTPSocket.setSoTimeout(5);
 					// FIM MOD 2.03
 
-
 				}
-				catch (SocketException se){
-					
+				catch (SocketException se){					
 					System.out.println("Socket exception: " + se);
 					se.printStackTrace();
-					//System.exit(0);
 				}
 
 				//init RTSP sequence number
@@ -232,12 +178,8 @@ public class P2PVideoClient{
 				//Wait for the response
 				if (parseServerResponse() != 200)
 					System.out.println("Invalid Server Response");
-				else
-				{
+				else{
 					state = RTSPState.READY;
-					//change RTSP state and print new state
-					//state = ....
-					//System.out.println("New RTSP state: ....");
 				}
 			}//else if state != INIT then do nothing
 		}
@@ -248,13 +190,7 @@ public class P2PVideoClient{
 	class PlayButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 
-			//System.out.println("Play Button pressed !");
-
 			if (state == RTSPState.READY){
-				//increase RTSP sequence number
-				//.....
-
-
 				//Send PLAY message to the server
 				sendRTSPRequest("PLAY");
 
@@ -262,11 +198,6 @@ public class P2PVideoClient{
 				if (parseServerResponse() != 200){
 					System.out.println("Invalid Server Response");
 				}else{
-					//change RTSP state and print out new state
-					//.....
-					// System.out.println("New RTSP state: ...")
-
-					//start the timer
 					timer.start();
 					state = RTSPState.PLAYING;
 				}
@@ -278,13 +209,8 @@ public class P2PVideoClient{
 	//Handler for Pause button
 	//-----------------------
 	class PauseButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e){
-
-			//System.out.println("Pause Button pressed !");    
+		public void actionPerformed(ActionEvent e){    
 			if (state == RTSPState.PLAYING){
-				//increase RTSP sequence number
-				//........
-
 				//Send PAUSE message to the server
 				sendRTSPRequest("PAUSE");
 
@@ -293,11 +219,7 @@ public class P2PVideoClient{
 					System.out.println("Invalid Server Response");
 				else{
 					System.out.println("Received 200 response from server");
-					//change RTSP state and print out new state
-					//........
-					state = RTSPState.READY;
-					System.out.println("New RTSP state: ..." + state);
-
+					state = RTSPState.READY;					
 					//stop the timer
 					timer.stop();
 				}
@@ -322,9 +244,9 @@ public class P2PVideoClient{
 				state = RTSPState.DONE;
 				//stop the timer
 				timer.stop();
-
+				
 				//exit
-				System.exit(0);
+				//System.exit(0);
 			}
 		}
 	}
@@ -346,12 +268,6 @@ public class P2PVideoClient{
 
 				//create an RTPpacket object from the DP
 				RTPPacket rtpPacket = new RTPPacket(rcvSocket.getData(), rcvSocket.getLength());
-
-				//print important header fields of the RTP packet received:
-				//System.out.println("Got RTP packet with SeqNum # " + rtpPacket.getSequenceNumber() + " TimeStamp " + rtpPacket.getTimestamp()+" ms, of type "+rtpPacket.getPayloadType());
-
-				//print header bitstream:
-				//rtpPacket.printHeader();
 
 				//get the payload bitstream from the RTPpacket object
 				int payloadLength = rtpPacket.getPayloadLength();				
@@ -394,8 +310,7 @@ public class P2PVideoClient{
 			replyCode = Integer.parseInt(tokens.nextToken());
 
 			//if reply code is OK get and print the 2 other lines
-			if (replyCode == 200)
-			{
+			if (replyCode == 200){
 				String seqNumLine = RTSPBufferedReader.readLine();
 				System.out.println(seqNumLine);
 
@@ -412,19 +327,11 @@ public class P2PVideoClient{
 		{
 			System.out.println("Exception when parsing server response: " + ex);
 			ex.printStackTrace();
-			System.exit(0);
+			//System.exit(0);
 		}
 
 		return(replyCode);
 	}
-
-	//------------------------------------
-	//Send RTSP Request
-	//------------------------------------
-
-	//.............
-	//TO COMPLETE
-	//.............
 
 	// Change 1394
 	// Implementing method
@@ -443,7 +350,6 @@ public class P2PVideoClient{
 				RTSPBufferedWriter.write("Transport: RTP/AVP;unicast;client_port=" + rtpRcvPort + CRLF);
 				// Transport: RTP/AVP;unicast;client_port=4588-4589
 				// FIM MOD 2.04
-				    		    		    	
 
 			}else{
 				RTSPBufferedWriter.write("Session: " + RTSPId + CRLF);
@@ -460,6 +366,20 @@ public class P2PVideoClient{
 		// Cliente incrementa o numero de sequencia a cada requisicao enviada.
 		RTSPSequenceNumber++;
 		// MOD 2.05
+	}
+	
+	public void endConnection() throws IOException{
+		
+		// Libera buffers
+		RTSPBufferedReader.close();
+		RTSPBufferedWriter.close();
+		RTSPsocket.close();
+		RTPSocket.close();
+		
+		// Libera recursos gráficos
+		mainFrame.dispose();
+		mainFrame = null;
+		
 	}
 
 	public void setRemotePort(int remotePort) {
@@ -478,14 +398,6 @@ public class P2PVideoClient{
 		return remoteIP;
 	}
 
-
-//	public void setServerAddress(InetAddress address){
-//		this.remoteIP = address;
-//	}
-//
-//	public void setServerPort(int port){
-//		this.remotePort = port;
-//	}
 
 }//end of Class Client
 

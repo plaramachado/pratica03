@@ -22,8 +22,8 @@ public class ServerFrame extends JFrame{
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("iServer");
-		this.setMinimumSize(new Dimension(400,400));
-		this.setPreferredSize(new Dimension(400,400));
+		this.setMinimumSize(new Dimension(550,550));
+		this.setPreferredSize(new Dimension(550,550));
 	}
 	
 	public JPanel getMainPanel(){

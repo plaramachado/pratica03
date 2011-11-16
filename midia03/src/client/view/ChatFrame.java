@@ -54,7 +54,7 @@ public class ChatFrame extends JInternalFrame implements Observer{
 		this.getContentPane().add(this.getChatPanel());
 		this.getMessageTextArea().addKeyListener(new EnterHitHandler(this));
 		this.getPlayVideoButton().addActionListener( new PlayVideoButtonListener(this));
-		this.addInternalFrameListener(new CloseHandler());
+		this.addInternalFrameListener(new CloseHandler(this));
 //		try {
 //			this.setMaximum(true);
 //		} catch (PropertyVetoException e) {
@@ -203,9 +203,17 @@ public class ChatFrame extends JInternalFrame implements Observer{
 
 class CloseHandler implements InternalFrameListener{
 
+	private ChatFrame chatFrame;
+	
+	public CloseHandler(ChatFrame frame){
+		this.chatFrame = frame;
+	}
+	
 	@Override
 	public void internalFrameClosed(InternalFrameEvent e) {
 		// TODO - logica para encerrar a conexao
+		P2P p = this.chatFrame.p2pconnect;
+		p.sendBye();
 		
 	}
 	
@@ -259,6 +267,7 @@ class PlayVideoButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
     	P2P p2p = this.chatFrame.p2pconnect;
     	p2p.receiveVideo();
+    	this.chatFrame.getPlayVideoButton().setEnabled(false); // HAHAHA só pode usar 1 vez 
     }
     
 }
