@@ -9,13 +9,18 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
+
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 import client.Client;
 import client.Client.ClientListener;
+import client.GroupClient;
 import client.P2PServer;
 import client.PeerListener;
 import client.model.DefaultClientListenerImpl;
+import client.model.DefaultGroupClientListenerImpl;
 import client.model.DefaultPeerListenerImpl;
 
 
@@ -29,6 +34,7 @@ public class ClientFrame extends BaseClientFrame{
 	private CallDialog callDialog;
 	private ClientListener clientListener;
 	private PeerListener peerListener;
+	private GroupClient groupClient;
 	
 
 	private P2PServer p2pServer;
@@ -54,22 +60,32 @@ public class ClientFrame extends BaseClientFrame{
 		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
 		this.getCallButton().addActionListener(new CallButtonListener(this));
+		// Not so cool, but...
+		this.getCreateGroupButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String groupName = JOptionPane.showInputDialog("Enter group name:");
+				groupClient.createGroup(groupName);
+				
+			}
+		});
 		//this.getPlayVideoButton().addActionListener(new PlayVideoButtonListener(this));
 		
 		try {
 			this.client = new Client();
-			//this.client.setPort(5151 + (int)Math.round(10000*Math.random())); //tiago
 			this.client.setPort(p2pServer.getLocalPort());
 			this.clientListener = new DefaultClientListenerImpl(this);
 			this.client.setListener(clientListener);
 			
+			this.groupClient = new GroupClient(client);
+			this.groupClient.setListener(new DefaultGroupClientListenerImpl(this));
 			
-			//this.client.setP2plistener(peerListener);
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -212,4 +228,5 @@ class CallButtonListener extends BaseListener{
 	}
 	
 }
+
 
