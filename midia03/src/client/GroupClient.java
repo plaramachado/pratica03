@@ -201,20 +201,18 @@ public class GroupClient implements ClientForker{
 
 		@Override
 		public void groupAccepted(String groupName) {
-			// TODO Auto-generated method stub
-
+			System.out.println("Accepted in " + groupName);
 		}
 
 		@Override
 		public void createOk(String groupName) {
-			// TODO Auto-generated method stub
+			System.out.println("Created ok " + groupName);
 
 		}
 
 		@Override
 		public void createFailed(String groupName) {
-			// TODO Auto-generated method stub
-
+			System.out.println("Created not ok... " + groupName);
 		}
 
 		@Override
