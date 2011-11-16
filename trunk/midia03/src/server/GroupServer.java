@@ -93,6 +93,7 @@ public class GroupServer implements ServerForker {
 			master.clientLeave(groupName, userName);
 		}
 		if(nextToken.equals("GROUPGET")){
+			System.out.println("Trying GROUPGET ");
 			processed = true;
 			String groupList = master.getGroupList();
 			server.sendMessage(groupList);

@@ -51,6 +51,7 @@ public class GroupClient implements ClientForker{
 		boolean processed = false;
 		StringTokenizer tokens = new StringTokenizer(newLine);
 		String nextToken = tokens.nextToken();
+		System.out.println("Client try forking " + newLine);
 		//		nextToken = nextToken.trim();
 		if(nextToken.equals("TEXTGROUP")){
 			String groupName = tokens.nextToken();
@@ -101,6 +102,7 @@ public class GroupClient implements ClientForker{
 			listener.clientWantsToJoin(groupName, clientName);
 		}
 		if(nextToken.equals("GROUPS")){
+			System.out.println("GOTGROUPS ");
 			processed = true;
 			ArrayList<String> groups = new ArrayList<String>();
 			while(true){
