@@ -143,7 +143,7 @@ public class MasterGroupServer {
 	public String getGroupList() {
 		String message = "GROUPS \r\n";
 		for (int i = 0; i < groups.size(); i++) {
-			message += groups.get(i)+" \r\n";
+			message += groups.get(i).getName()+" \r\n";
 		}
 		message += "\r\n";
 		return message;
