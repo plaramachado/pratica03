@@ -18,7 +18,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	@Override
 	public void groupRefused(String groupName) {
-		JOptionPane.showMessageDialog(clientFrame, "Your call to the group" + groupName + "was refused");
+		JOptionPane.showMessageDialog(clientFrame, "Your call to the group " + groupName + " was refused");
 
 	}
 
@@ -42,7 +42,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 		// TODO criar janela de chat do grupo
 		// FIXME criar janela de chat do grupo
 		System.out.println("CREATE OK");
-		JOptionPane.showMessageDialog(clientFrame, "Sucessfully created the group" + groupName);
+		JOptionPane.showMessageDialog(clientFrame, "Sucessfully created the group " + groupName);
 
 	}
 
@@ -55,15 +55,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	@Override
 	public void updateClientsInGroup(ArrayList<String> participants) {
 		
-		System.out.println("UPDATING GROUP LIST");
-		MutableList l = this.clientFrame.getGroupsList();
 		
-		l.getContents().removeAllElements();
-		for(int i = 0; i<participants.size(); i++){
-			l.getContents().addElement(participants.get(i));
-		}
-		this.clientFrame.pack();
-		this.clientFrame.repaint();
 
 	}
 
@@ -75,7 +67,16 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	@Override
 	public void updateGroupNames(ArrayList<String> groups) {
-		// TODO Auto-generated method stub
+
+		System.out.println("UPDATING GROUP LIST");
+		MutableList l = this.clientFrame.getGroupsList();
+		
+		l.getContents().removeAllElements();
+		for(int i = 0; i<groups.size(); i++){
+			l.getContents().addElement(groups.get(i));
+		}
+		this.clientFrame.pack();
+		this.clientFrame.repaint();
 
 	}
 

@@ -71,7 +71,25 @@ public class ClientFrame extends BaseClientFrame{
 				
 			}
 		});
-		//this.getPlayVideoButton().addActionListener(new PlayVideoButtonListener(this));
+		
+		this.getCallGroupButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String groupName = getGroupsList().getSelectedValue().toString();
+				groupClient.requestJoin(groupName);
+				
+			}
+		});
+		
+		this.getRefreshGroupsButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				groupClient.requestGroupList();
+				
+			}
+		});
 		
 		try {
 			this.client = new Client();
@@ -107,20 +125,6 @@ public class ClientFrame extends BaseClientFrame{
 	public CallDialog getCallDialog() {
 		return callDialog;
 	}
-
-//	public void updateContactList(ArrayList<String> contactList){
-//		JList l = this.getContactsList();
-//		l.removeAll();
-//		ListModel m = l.getModel();
-//		
-//		System.out.println("ON UPDATE CONTACT LIST");
-//		for(int i=0; i<contactList.size(); i++){
-//			
-//		}
-//		//l.repaint();
-//		this.pack();
-//	}
-
 
 	public Client getClient(){
 		return this.client;
@@ -182,7 +186,7 @@ class RegisterButtonListener extends BaseListener{
 		this.getFrame().getCallButton().setEnabled(true);
 		this.getFrame().getQuitButton().setEnabled(true);
 		this.getFrame().getCreateGroupButton().setEnabled(true);
-		this.getFrame().getCreateGroupButton().setEnabled(true);
+		this.getFrame().getCallGroupButton().setEnabled(true);
 		//System.out.println("Event fired");
 		
 	}
