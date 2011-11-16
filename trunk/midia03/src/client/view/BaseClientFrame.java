@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -50,6 +51,8 @@ public class BaseClientFrame extends JFrame{
 	private JButton quitButton;
 	private JButton callButton;
 	private JButton endCallButton;
+	private JButton callGroupButton;
+	private JButton createGroupButton;
 	
 	// Panels
 	private JPanel contactsPanel;
@@ -65,9 +68,11 @@ public class BaseClientFrame extends JFrame{
 	
 	// Lists
 	private MutableList contactsList;
+	private MutableList groupsList;
 	
 	// Internal frames
 	private Map<String, JInternalFrame> chatWindows; // All active chat windows.
+	
 	
 	public static void main(String[] args) {
 		BaseClientFrame c = new BaseClientFrame("iChat");
@@ -155,19 +160,30 @@ public class BaseClientFrame extends JFrame{
 		return endCallButton;
 	}
 
+	public JButton getCreateGroupButton(){
+		if(this.createGroupButton != null) return createGroupButton;
+		
+		createGroupButton = new JButton();
+		createGroupButton.setIcon(createImageIcon("resources/icons/config-users.png"));
+		createGroupButton.setToolTipText("Create group");
+		return createGroupButton;
+	}
+	
 	public JPanel getContactsPanel() {
 		if(contactsPanel != null) return contactsPanel;
 		
 		JScrollPane scroller = new JScrollPane(this.getContactsList());
 		scroller.setMinimumSize(new Dimension(130, 400));
+		scroller.setSize(new Dimension(100, 400));
 		
 		contactsPanel = new JPanel();
+		contactsPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		
 		c.fill = c.VERTICAL;
 		c.gridx = 0;
 		c.gridy = 0;
-		contactsPanel.setLayout(new GridBagLayout());
+		scroller.setBorder(BorderFactory.createTitledBorder("Contacts"));
 		contactsPanel.add(scroller, c);
 		
 		c.gridx = 0;
@@ -175,12 +191,41 @@ public class BaseClientFrame extends JFrame{
 		c.insets = new Insets(10, 0, 0, 0);
 		contactsPanel.add(this.getCallButton(), c);
 		
+		scroller = new JScrollPane(this.getGroupsList());
+		scroller.setMinimumSize(new Dimension(130, 400));
+		scroller.setSize(new Dimension(100, 400));
+		
+		c.fill = c.VERTICAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		scroller.setBorder(BorderFactory.createTitledBorder("Groups"));
+		contactsPanel.add(scroller, c);
+		
+		
+		c.gridx = 0;
+		c.gridy = 3;
+		c.insets = new Insets(10, 0, 0, 0);
+		contactsPanel.add(this.getCallGroupButton(), c);
+		
+		c.gridx = 1;
+		c.gridy = 3;
+		c.insets = new Insets(10, 0, 0, 0);
+		contactsPanel.add(this.getCreateGroupButton(), c);
+		
 		return contactsPanel;
 	}
 	
 	
 	
 	
+	private JButton getCallGroupButton() {
+		if(this.callGroupButton != null) return callGroupButton;
+		callGroupButton = new JButton();
+		callGroupButton.setIcon(createImageIcon("resources/icons/call-start.png"));
+		callGroupButton.setToolTipText("Call group");
+		return callGroupButton;
+	}
+
 	public JDesktopPane getChatPanel() {
 		
 		if(chatPanel != null) return chatPanel;
@@ -264,8 +309,9 @@ public class BaseClientFrame extends JFrame{
 		
 		contactsList = new MutableList();
 		contactsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		contactsList.setLayoutOrientation(JList.VERTICAL_WRAP);
-		contactsList.setVisibleRowCount(-1);
+		contactsList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		//contactsList.setVisibleRowCount(-1);
+		//contactsList.setSize(new Dimension(100,100));
 		
 		// Render the list with icon
 		contactsList.setCellRenderer(new ListCellRenderer() {
@@ -283,14 +329,37 @@ public class BaseClientFrame extends JFrame{
 		return contactsList;
 	}
 	
-	
-	@Deprecated
-	public Map<String, JInternalFrame> getChatWindows() {
-		if(chatWindows != null) return chatWindows;
+	public MutableList getGroupsList() {
+		if(groupsList != null) return groupsList;
 		
-		chatWindows = new HashMap<String, JInternalFrame>();
-		return chatWindows;
+		groupsList = new MutableList();
+		groupsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		groupsList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		groupsList.setVisibleRowCount(-1);
+		
+		// Render the list with icon
+		contactsList.setCellRenderer(new ListCellRenderer() {
+			private DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
+			@Override
+			public Component getListCellRendererComponent(JList list, Object value,
+					int index, boolean isSelected, boolean cellHasFocus) {
+				JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index,
+				        isSelected, cellHasFocus);
+				renderer.setIcon(createImageIcon("resources/icons/online2.jpg"));
+				return renderer;
+			}
+		});
+		
+		return groupsList;
 	}
+	
+//	@Deprecated
+//	public Map<String, JInternalFrame> getChatWindows() {
+//		if(chatWindows != null) return chatWindows;
+//		
+//		chatWindows = new HashMap<String, JInternalFrame>();
+//		return chatWindows;
+//	}
 
 	/**
 	 * Creates a new chat frame. 
