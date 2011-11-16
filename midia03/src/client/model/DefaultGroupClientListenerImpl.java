@@ -18,13 +18,14 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	@Override
 	public void groupRefused(String groupName) {
-		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(clientFrame, "Your call to the group" + groupName + "was refused");
 
 	}
 
 	@Override
 	public void groupAccepted(String groupName) {
 		// TODO Auto-generated method stub
+		// FIXME criar janela de conversa em grupo
 
 	}
 
@@ -32,7 +33,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	public void createFailed(String groupName) {
 		
 		System.out.println("CREATE NOK");
-		JOptionPane.showMessageDialog(null, "Could not create group " + groupName);
+		JOptionPane.showMessageDialog(clientFrame, "Could not create group " + groupName);
 
 	}
 
@@ -41,7 +42,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 		// TODO criar janela de chat do grupo
 		// FIXME criar janela de chat do grupo
 		System.out.println("CREATE OK");
-		JOptionPane.showMessageDialog(null, "Sucessfully created the group" + groupName);
+		JOptionPane.showMessageDialog(clientFrame, "Sucessfully created the group" + groupName);
 
 	}
 
@@ -54,6 +55,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	@Override
 	public void updateClientsInGroup(ArrayList<String> participants) {
 		
+		System.out.println("UPDATING GROUP LIST");
 		MutableList l = this.clientFrame.getGroupsList();
 		
 		l.getContents().removeAllElements();
