@@ -76,7 +76,8 @@ public class GroupServer implements ServerForker {
 			String groupName = tokens.nextToken();
 			boolean addNewGroup = master.addNewGroup(groupName, server.getClient().getUserName());
 			if(addNewGroup) server.sendMessage(Messages.createOk(groupName));
-			if(addNewGroup) server.sendMessage(Messages.createError(groupName));
+			else server.sendMessage(Messages.createError(groupName));
+//			if(addNewGroup) server.sendMessage(Messages.createError(groupName));
 		}
 		if(nextToken.equals("CLOSE")){
 			processed = true;
