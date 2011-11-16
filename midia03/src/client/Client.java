@@ -141,7 +141,8 @@ public class Client {
 		while(!done){
 			String readLine = "";
 			try {
-				readLine = bufferedReader.readLine();
+				while(readLine.trim().isEmpty())
+					readLine = bufferedReader.readLine();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				connectionDies();

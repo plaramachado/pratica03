@@ -23,6 +23,7 @@ public class GroupServer implements ServerForker {
 
 	@Override
 	public boolean fork(String receivedLine) {
+		System.out.println("Trying to fork " + receivedLine);
 		boolean processed = false; //if the fork happens
 		StringTokenizer tokens = new StringTokenizer(receivedLine);
 		String nextToken = tokens.nextToken();
@@ -72,6 +73,7 @@ public class GroupServer implements ServerForker {
 				
 		}
 		if(nextToken.equals("CREATE")){
+			System.out.println("Trying to create group");
 			processed = true;
 			String groupName = tokens.nextToken();
 			boolean addNewGroup = master.addNewGroup(groupName, server.getClient().getUserName());
