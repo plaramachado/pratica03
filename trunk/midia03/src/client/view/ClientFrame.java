@@ -129,6 +129,10 @@ public class ClientFrame extends BaseClientFrame{
 	public Client getClient(){
 		return this.client;
 	}
+	
+	public GroupClient getGroupClient(){
+		return this.groupClient;
+	}
 		
 	public PeerListener getPeerListener() {
 		return peerListener;

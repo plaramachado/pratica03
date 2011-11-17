@@ -52,15 +52,25 @@ public class ChatFrame extends JInternalFrame implements Observer{
 		this.setMaximizable(true);
 		this.setClosable(true);
 		this.getContentPane().add(this.getChatPanel());
-		this.getMessageTextArea().addKeyListener(new EnterHitHandler(this));
-		this.getPlayVideoButton().addActionListener( new PlayVideoButtonListener(this));
-		this.addInternalFrameListener(new CloseHandler(this));
+		setEventHandlers();
 //		try {
 //			this.setMaximum(true);
 //		} catch (PropertyVetoException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+	}
+	
+	public ChatFrame(BaseClientFrame cf, boolean setEventHandlers){
+		this(cf);
+		if(setEventHandlers)
+			setEventHandlers();
+	}
+
+	public void setEventHandlers() {
+		this.getMessageTextArea().addKeyListener(new EnterHitHandler(this));
+		this.getPlayVideoButton().addActionListener( new PlayVideoButtonListener(this));
+		this.addInternalFrameListener(new CloseHandler(this));
 	}
 	
 	public JTextArea getChatTextArea() {

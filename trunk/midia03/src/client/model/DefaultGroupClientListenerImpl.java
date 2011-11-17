@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import client.GroupClientListener;
+import client.view.ChatFrame;
 import client.view.ClientFrame;
+import client.view.GroupChatFrame;
 import client.view.MutableList;
 
 public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	
 	private ClientFrame clientFrame;
+	private ChatFrame chatFrame;
+	
 	
 	public DefaultGroupClientListenerImpl(ClientFrame f) {
 		this.clientFrame = f;
@@ -25,7 +29,8 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	@Override
 	public void groupAccepted(String groupName) {
 		// TODO Auto-generated method stub
-		// FIXME criar janela de conversa em grupo
+		this.chatFrame = this.clientFrame.createGroupChatFrame(groupName);
+		this.chatFrame.setCaller(groupName);
 
 	}
 
@@ -43,12 +48,18 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 		// FIXME criar janela de chat do grupo
 		System.out.println("CREATE OK");
 		JOptionPane.showMessageDialog(clientFrame, "Sucessfully created the group " + groupName);
+		this.chatFrame = this.clientFrame.createGroupChatFrame(groupName);
 
 	}
 
 	@Override
 	public void clientWantsToJoin(String groupName, String clientName) {
-		// TODO Auto-generated method stub
+		int ok = JOptionPane.showConfirmDialog(clientFrame, "Client " + clientName + " wants to join " + groupName);
+		if( ok == JOptionPane.OK_OPTION){
+			this.clientFrame.getGroupClient().acceptJoin(clientName);
+		}else{
+			this.clientFrame.getGroupClient().refuseJoin(clientName);
+		}
 
 	}
 
@@ -74,6 +85,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 		l.getContents().removeAllElements();
 		for(int i = 0; i<groups.size(); i++){
 			l.getContents().addElement(groups.get(i));
+			System.out.println(groups.get(i));
 		}
 		this.clientFrame.pack();
 		this.clientFrame.repaint();
@@ -82,13 +94,17 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	@Override
 	public void groupEnded(String groupName) {
-		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(clientFrame, "Group " + groupName + " was closed");
+		if(this.chatFrame != null) this.chatFrame.dispose();
+		this.chatFrame = null;
 
 	}
 
 	@Override
 	public void textArrives(String groupName, String clientName, String msg) {
-		// TODO Auto-generated method stub
+		if(this.chatFrame != null){
+			this.chatFrame.getChatTextArea().append(clientName + ": " + msg + "\n");
+		}
 
 	}
 
@@ -96,6 +112,14 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	public void videoPassing(String groupName) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setChatFrame(ChatFrame chatFrame) {
+		this.chatFrame = chatFrame;
+	}
+
+	public ChatFrame getChatFrame() {
+		return chatFrame;
 	}
 
 }
