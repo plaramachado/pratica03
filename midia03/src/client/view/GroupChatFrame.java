@@ -23,19 +23,22 @@ public class GroupChatFrame extends ChatFrame {
 		this.getMessageTextArea().addKeyListener( new KeyListener() {
 			
 			@Override
-			public void keyTyped(KeyEvent arg0) {}
-			public void keyReleased(KeyEvent arg0) {}
-			public void keyPressed(KeyEvent e) {
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			public void keyReleased(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){
 
-					String msg = getMessageTextArea().getText().trim();
+					String msg = getMessageTextArea().getText().trim().trim();
+					if(msg.isEmpty()) return;
 					getFrame().getGroupClient().groupText(msg);
-					
+					System.out.println("ENVIANDO PRO SERVIDOR" + msg);
 					getMessageTextArea().setText("");
-					getChatTextArea().append("\nMe: " + msg);
+					//getChatTextArea().append("\nMe: " + msg);
 					
 				}
 			}
+			public void keyPressed(KeyEvent e) {}
 		});
 		
 		this.addInternalFrameListener(new InternalFrameListener() {
