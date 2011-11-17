@@ -36,6 +36,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 
 import client.Client;
+import client.GroupClient;
 
 /**
  * Client main window.
@@ -370,19 +371,35 @@ public class BaseClientFrame extends JFrame{
 	public ChatFrame createChatFrame(String caller){
 		// TO DO Considerar possibilidade de ja existir
 		// um frame associado a esta ligação
-		ChatFrame c = new ChatFrame(this);
+		return createChatFrame(caller, true);
+	}
+	
+	public ChatFrame createChatFrame(String caller, boolean setEventHandlers){
+		ChatFrame c = new ChatFrame(this, setEventHandlers);
 		c.setTitle("Chat with " + caller);
 		c.setVisible(true);
 		c.moveToFront();
 		c.setSize(400, 400);
 		c.setCaller(caller);
-		//this.chatWindows.put(caller, c  );
+		this.getChatPanel().add(c);
+		this.repaint();
+		return c;
+	}
+	
+	public GroupChatFrame createGroupChatFrame(String group){
+		GroupChatFrame c = new GroupChatFrame(this);
+		c.setTitle("Group Chat with " + group);
+		c.setVisible(true);
+		c.moveToFront();
+		c.setSize(400, 400);
+		c.setCaller(group);
 		this.getChatPanel().add(c);
 		this.repaint();
 		return c;
 	}
 	
 	public Client getClient(){ return null;} // oOps
+	public GroupClient getGroupClient(){ return null;} // oOps[2]
 
 	protected ImageIcon createImageIcon(String path) {
 		
