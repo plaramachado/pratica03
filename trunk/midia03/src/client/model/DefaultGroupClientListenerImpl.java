@@ -13,7 +13,7 @@ import client.view.MutableList;
 public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	
 	private ClientFrame clientFrame;
-	private ChatFrame chatFrame;
+	private GroupChatFrame chatFrame;
 	
 	
 	public DefaultGroupClientListenerImpl(ClientFrame f) {
@@ -30,7 +30,9 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	public void groupAccepted(String groupName) {
 		JOptionPane.showMessageDialog(clientFrame, "You was accepted for the group " + groupName );
 		this.chatFrame = this.clientFrame.createGroupChatFrame(groupName);
+		this.chatFrame.setOwner(false);
 		this.chatFrame.setCaller(groupName);
+		
 
 	}
 
@@ -49,6 +51,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 		System.out.println("CREATE OK");
 		JOptionPane.showMessageDialog(clientFrame, "Sucessfully created the group " + groupName);
 		this.chatFrame = this.clientFrame.createGroupChatFrame(groupName);
+		this.chatFrame.setOwner(false);
 
 	}
 
@@ -119,11 +122,11 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	}
 
-	public void setChatFrame(ChatFrame chatFrame) {
+	public void setChatFrame(GroupChatFrame chatFrame) {
 		this.chatFrame = chatFrame;
 	}
 
-	public ChatFrame getChatFrame() {
+	public GroupChatFrame getChatFrame() {
 		return chatFrame;
 	}
 
