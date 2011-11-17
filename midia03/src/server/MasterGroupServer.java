@@ -155,7 +155,7 @@ public class MasterGroupServer {
 		String name = group.getName();
 		ArrayList<String> clientNames = group.getClientNames();
 		groups.remove(group);
-		String msg = Messages.close(name);
+		String msg = Messages.closed(name);
 		for (int i = 0; i < clientNames.size(); i++) {
 			masterServer.sendMessage(clientNames.get(i), msg);
 		}
