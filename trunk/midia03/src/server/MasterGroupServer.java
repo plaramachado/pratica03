@@ -213,9 +213,11 @@ public class MasterGroupServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		if(main == 0) System.out.println("BAD PORT SERVER");
 		String videoGo = Messages.videoGo(groupName, main);
 		Group group = getGroup(groupName);
+		group.setVideoPassing(true);
 		ArrayList<String> clientNames = group.getClientNames();
 		for (int i = 0; i < clientNames.size(); i++) {
 			String clientName = clientNames.get(i);

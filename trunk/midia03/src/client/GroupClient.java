@@ -1,12 +1,10 @@
 package client;
 
-import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import server.Messages;
-import video.conference.ClientVideo;
+import video.conference.MultiClient;
 import video.conference.ServerVideo;
 import client.Client.ClientForker;
 
@@ -132,7 +130,7 @@ public class GroupClient implements ClientForker{
 			String connectPort = tokens.nextToken();
 			int portNumber = Integer.parseInt(connectPort);
 			try {
-				ClientVideo.main(Client.serverIP, portNumber);
+				MultiClient.main(Client.serverIP, portNumber);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -197,7 +195,7 @@ public class GroupClient implements ClientForker{
 			e.printStackTrace();
 		}
 		if(rtspPortUsed == 0) System.out.println("BAD PORT HERE");
-		String sendVideo = Messages.sendVideo(myGroupName, rtspPortUsed);
+		String sendVideo = Messages.sendVideo(groupJoined, rtspPortUsed);
 		client.sendMessage(sendVideo);
 	}
 	
