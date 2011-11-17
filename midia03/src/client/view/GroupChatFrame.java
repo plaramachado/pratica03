@@ -58,7 +58,12 @@ public class GroupChatFrame extends ChatFrame {
 			
 			@Override
 			public void internalFrameClosed(InternalFrameEvent arg0) {
-					JOptionPane.showConfirmDialog(null, "terminar isso");
+				if(isOwner){
+					getFrame().getGroupClient().groupClose();
+				}else{
+					getFrame().getGroupClient().groupLeave();
+				}
+					//JOptionPane.showConfirmDialog(null, "terminar isso");
 					
 				
 			}

@@ -15,6 +15,8 @@ public class DefaultClientListenerImpl implements ClientListener {
 	
 	private ClientFrame frame;
 	
+	public static String caller = "unknown";
+	
 	public DefaultClientListenerImpl(ClientFrame frame){
 		this.frame = frame;
 	}
@@ -49,6 +51,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 	public void incomingCall(String caller) {
 		// TODO Tratar a conexão que chegou
 		//JOptionPane.showMessageDialog(this.frame, "Accept call from " + caller + "?");
+		DefaultClientListenerImpl.caller = caller; 
 		int answer = JOptionPane.showConfirmDialog(this.frame, "Accept call from " + caller + "?", "Incoming call", JOptionPane.YES_NO_OPTION);
 		
 		if(answer == JOptionPane.YES_OPTION){

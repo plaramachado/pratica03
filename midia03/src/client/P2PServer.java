@@ -8,6 +8,9 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import client.model.DefaultClientListenerImpl;
+import client.model.DefaultPeerListenerImpl;
+
 /**
  * This class contains logic to deal with SETUP requests 
  * from other clients, after a call has been established.
@@ -111,6 +114,7 @@ class P2PServerThread implements Runnable{
 			}
 			
 			P2P p = new P2P(this.listener);
+			p.setRemotePeerName(DefaultClientListenerImpl.caller);
 			
 			// Send back the RSTP port we are going to listen
 			this.bufferedWriter.append(responseP2P(p.getLocalRTSPPort())) ;
