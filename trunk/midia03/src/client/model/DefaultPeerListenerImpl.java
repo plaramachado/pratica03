@@ -27,7 +27,8 @@ public class DefaultPeerListenerImpl implements PeerListener{
 	 * */
 	public void gotP2P(P2P peer) {
 		// OK, temos um nó aqui =P
-		ChatFrame c = frame.createChatFrame("unknown");
+		
+		ChatFrame c = frame.createChatFrame( peer.getRemotePeerName() );
 		MessageListener ml = new DefaultMessageListenerImpl(c);
 		peer.setMessageListener(ml);
 		c.setP2P(peer);

@@ -55,11 +55,19 @@ public class ClientFrame extends BaseClientFrame{
 		this.p2pServer = new P2PServer(peerListener);
 		new Thread(this.p2pServer).start();
 		
-		
-		//this.peers = new HashMap<String, ClientInfo>();
-		
 		this.getRegisterButton().addActionListener(new RegisterButtonListener(this));
 		this.getCallButton().addActionListener(new CallButtonListener(this));
+		
+		this.getQuitButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getClient().unregister();
+				System.exit(0);
+				
+			}
+		});
+		
 		// Not so cool, but...
 		this.getCreateGroupButton().addActionListener(new ActionListener() {
 			
@@ -78,6 +86,17 @@ public class ClientFrame extends BaseClientFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				String groupName = getGroupsList().getSelectedValue().toString();
 				groupClient.requestJoin(groupName);
+				
+				
+				
+				CallDialog l = new CallDialog(ClientFrame.this);
+				setCallDialog(l);
+				l.setLocationRelativeTo(ClientFrame.this);
+				l.getLabel().setText("Calling " + groupName);
+				l.setTitle("Call to " + groupName);
+				l.setVisible(true);
+				l.pack();
+				
 				
 			}
 		});
@@ -119,7 +138,6 @@ public class ClientFrame extends BaseClientFrame{
 	
 	public void setCallDialog(CallDialog callDialog) {
 		this.callDialog = callDialog;
-		//System.out.println("Setando CallDialog");
 	}
 
 	public CallDialog getCallDialog() {

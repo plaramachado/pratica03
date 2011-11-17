@@ -218,10 +218,10 @@ public class P2P extends Thread{
 		receiveMessageLoop();
 	}
 	
-	public void acceptVideo(){ //accept TO RECEIVE a video
-		this.localVideoClient = new P2PVideoClient(getRemoteIP(), getRemoteRTSPPort());
-
-	}
+//	public void acceptVideo(){ //accept TO RECEIVE a video
+//		//this.localVideoClient = new P2PVideoClient(getRemoteIP(), getRemoteRTSPPort());
+//
+//	}
 	public void receiveVideo(){
 		new Thread ("Receive video thread") {
 			public void run() {

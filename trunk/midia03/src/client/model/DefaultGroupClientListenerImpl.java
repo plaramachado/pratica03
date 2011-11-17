@@ -3,6 +3,7 @@ package client.model;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 import client.GroupClientListener;
 import client.view.ChatFrame;
@@ -78,7 +79,10 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	@Override
 	public void joinGroupStatus(String newLine) {
+		System.out.println("Status:" + newLine);
 		
+		JTextArea l = this.clientFrame.getCallDialog().getLabel();
+		l.setText( l.getText() + "\n" + newLine + "...");
 
 	}
 
