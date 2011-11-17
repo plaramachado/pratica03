@@ -20,11 +20,13 @@ import client.Client.ClientForker;
  * createGroup
  * refuseJoin
  * acceptJoin
+ * closeGroup
  * *** Client methods:
  * requestJoin
  * requestGroupList
  * groupLeave
  * groupText
+ * sendVideo
  * 
  * You also need to implement GroupClientListener to create the callback methods, and then use setListener
  * 
@@ -172,6 +174,11 @@ public class GroupClient implements ClientForker{
 	
 	public void groupLeave(){
 		String msg = Messages.leave(groupJoined);
+		client.sendMessage(msg);
+	}
+	
+	public void groupClose(){
+		String msg = Messages.close(myGroupName);
 		client.sendMessage(msg);
 	}
 	

@@ -26,6 +26,10 @@ public class Messages {
 		return "ACCEPTGROUP "+groupName + " \r\n";
 	}
 
+	public static String closed(String name) {
+		return "CLOSED " + name + " \r\n";
+	}
+	
 	public static String close(String name) {
 		return "CLOSE " + name + " \r\n";
 	}
