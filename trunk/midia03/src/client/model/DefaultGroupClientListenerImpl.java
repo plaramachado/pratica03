@@ -28,7 +28,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	@Override
 	public void groupAccepted(String groupName) {
-		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(clientFrame, "You was accepted for the group " + groupName );
 		this.chatFrame = this.clientFrame.createGroupChatFrame(groupName);
 		this.chatFrame.setCaller(groupName);
 
@@ -55,10 +55,13 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	@Override
 	public void clientWantsToJoin(String groupName, String clientName) {
 		int ok = JOptionPane.showConfirmDialog(clientFrame, "Client " + clientName + " wants to join " + groupName);
+		System.out.println("Client " + clientName + " wants to join " + groupName);
 		if( ok == JOptionPane.OK_OPTION){
 			this.clientFrame.getGroupClient().acceptJoin(clientName);
+			System.out.println("JOIN OK");
 		}else{
 			this.clientFrame.getGroupClient().refuseJoin(clientName);
+			System.out.println("JOIN NOK");
 		}
 
 	}
@@ -72,7 +75,7 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 
 	@Override
 	public void joinGroupStatus(String newLine) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -103,7 +106,9 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	@Override
 	public void textArrives(String groupName, String clientName, String msg) {
 		if(this.chatFrame != null){
-			this.chatFrame.getChatTextArea().append(clientName + ": " + msg + "\n");
+			this.chatFrame.getChatTextArea().append(clientName + ": " + msg.trim() + "\n");
+		}else{
+			System.out.println("CHATFRAME IS NULL");
 		}
 
 	}
