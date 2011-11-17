@@ -93,6 +93,7 @@ public class GroupClient implements ClientForker{
 			processed = true;
 			String groupName = tokens.nextToken();
 			myGroupName = groupName;
+			groupJoined = groupName;
 			listener.createOk(groupName);
 		}
 		if(nextToken.equals("WANTJOIN")){
