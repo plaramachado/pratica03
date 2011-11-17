@@ -1,6 +1,8 @@
 package client.view;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -12,6 +14,7 @@ import javax.swing.event.InternalFrameListener;
 
 public class GroupChatFrame extends ChatFrame {
 	
+	private boolean isOwner;
 
 	public GroupChatFrame(BaseClientFrame cf) {
 		super(cf, false);
@@ -56,6 +59,7 @@ public class GroupChatFrame extends ChatFrame {
 			@Override
 			public void internalFrameClosed(InternalFrameEvent arg0) {
 					JOptionPane.showConfirmDialog(null, "terminar isso");
+					
 				
 			}
 			
@@ -63,7 +67,15 @@ public class GroupChatFrame extends ChatFrame {
 		});
 		
 		
-		
+		this.getPlayVideoButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// FIXME NAO FUNCIONA :d
+				getFrame().getGroupClient().sendVideo();
+				
+			}
+		});
 		
 	}
 
@@ -88,6 +100,14 @@ public class GroupChatFrame extends ChatFrame {
 		c.moveToFront();
 		f.pack();
 
+	}
+
+	public void setOwner(boolean isOwner) {
+		this.isOwner = isOwner;
+	}
+
+	public boolean isOwner() {
+		return isOwner;
 	}
 
 }
