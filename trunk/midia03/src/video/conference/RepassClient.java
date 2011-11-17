@@ -127,11 +127,10 @@ public class RepassClient{
 			theClient.new SetupButtonListener().actionPerformed(null);
 			Thread.sleep(100);
 			theClient.new playButtonListener().actionPerformed(null);
-			
-			//this line has been added for debug, it starts an infinite while if you`re using a fixed port
-			if(videoPort != 0) while(true); //if you tried to use a fixed port, it locks the code, used for debugging
-			
 			return MutiServer.main(0);
+			//this line has been added for debug, it starts an infinite while if you`re using a fixed port
+//			if(videoPort != 0) while(true); //if you tried to use a fixed port, it locks the code, used for debugging
+			
 //		}
 	}
 
