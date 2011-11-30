@@ -30,8 +30,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 	@Override
 	public void registerError() {
 
-		JOptionPane.showMessageDialog(frame, "Erro registering user");
-
+		JOptionPane.showMessageDialog(frame, "Erro registering user. Please try again.");
 	}
 
 	@Override
@@ -67,6 +66,7 @@ public class DefaultClientListenerImpl implements ClientListener {
 		System.out.println("Status:" + status);
 		JTextArea l = this.frame.getCallDialog().getLabel();
 		l.setText( l.getText() + "\n" + status + "...");
+		System.out.println( l.getText() + "\n" + status + "..." );
 
 	}
 

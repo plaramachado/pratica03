@@ -17,8 +17,8 @@ public class GroupChatFrame extends ChatFrame {
 	private boolean isOwner;
 
 	public GroupChatFrame(BaseClientFrame cf) {
-		super(cf, false);
-		this.setEventHandlers();
+		super(cf);
+		//this.setEventHandlers();
 	}
 	
 	public void setEventHandlers(){
@@ -32,12 +32,11 @@ public class GroupChatFrame extends ChatFrame {
 			public void keyReleased(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){
 
-					String msg = getMessageTextArea().getText().trim().trim();
+					String msg = getMessageTextArea().getText().trim();
 					if(msg.isEmpty()) return;
 					getFrame().getGroupClient().groupText(msg);
-					System.out.println("ENVIANDO PRO SERVIDOR" + msg);
+					//System.out.println("ENVIANDO PRO SERVIDOR" + msg);
 					getMessageTextArea().setText("");
-					//getChatTextArea().append("\nMe: " + msg);
 					
 				}
 			}
@@ -63,9 +62,6 @@ public class GroupChatFrame extends ChatFrame {
 				}else{
 					getFrame().getGroupClient().groupLeave();
 				}
-					//JOptionPane.showConfirmDialog(null, "terminar isso");
-					
-				
 			}
 			
 			public void internalFrameActivated(InternalFrameEvent arg0) {}

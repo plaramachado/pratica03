@@ -61,11 +61,12 @@ public class ChatFrame extends JInternalFrame implements Observer{
 //		}
 	}
 	
-	public ChatFrame(BaseClientFrame cf, boolean setEventHandlers){
-		this(cf);
-		if(setEventHandlers)
-			setEventHandlers();
-	}
+//	public ChatFrame(BaseClientFrame cf, boolean setEventHandlers){	
+//		this(cf);
+//		
+////		if(setEventHandlers)
+////			setEventHandlers();
+//	}
 
 	public void setEventHandlers() {
 		this.getMessageTextArea().addKeyListener(new EnterHitHandler(this));
@@ -222,8 +223,14 @@ class CloseHandler implements InternalFrameListener{
 	@Override
 	public void internalFrameClosed(InternalFrameEvent e) {
 		// TODO - logica para encerrar a conexao
-		P2P p = this.chatFrame.p2pconnect;
-		p.sendBye();
+		try{
+			P2P p = this.chatFrame.p2pconnect;
+			p.sendBye();
+		}catch(Exception ex){
+			ex.printStackTrace();
+			System.out.println("EXCEPTION ENCERRANDO CONEXAO");
+		}
+		
 		
 	}
 	
