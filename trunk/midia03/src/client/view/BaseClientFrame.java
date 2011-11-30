@@ -375,7 +375,7 @@ public class BaseClientFrame extends JFrame{
 	}
 	
 	public ChatFrame createChatFrame(String caller, boolean setEventHandlers){
-		ChatFrame c = new ChatFrame(this, setEventHandlers);
+		ChatFrame c = new ChatFrame(this);
 		c.setTitle("Chat with " + caller);
 		c.setVisible(true);
 		c.moveToFront();

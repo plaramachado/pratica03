@@ -2,10 +2,12 @@ package client.model;
 
 import java.util.ArrayList;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import client.GroupClientListener;
+import client.view.CallDialog;
 import client.view.ChatFrame;
 import client.view.ClientFrame;
 import client.view.GroupChatFrame;
@@ -80,8 +82,16 @@ public class DefaultGroupClientListenerImpl implements GroupClientListener {
 	@Override
 	public void joinGroupStatus(String newLine) {
 		System.out.println("Status:" + newLine);
+		CallDialog d = clientFrame.getCallDialog();
+		if(d==null){
+			d = new CallDialog(clientFrame);
+			d.setTitle("Calling group");
+			d.setVisible(true);
+			clientFrame.setCallDialog(d);
+		}
 		
-		JTextArea l = this.clientFrame.getCallDialog().getLabel();
+		JTextArea l = d.getLabel();  
+			//this.clientFrame.getCallDialog().getLabel();
 		l.setText( l.getText() + "\n" + newLine + "...");
 
 	}
