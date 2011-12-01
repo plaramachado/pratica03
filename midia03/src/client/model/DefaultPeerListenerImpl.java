@@ -32,6 +32,7 @@ public class DefaultPeerListenerImpl implements PeerListener{
 		MessageListener ml = new DefaultMessageListenerImpl(c);
 		peer.setMessageListener(ml);
 		c.setP2P(peer);
+		peer.setChatFrame(c);
 		
 		
 	}		

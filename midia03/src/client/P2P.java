@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import client.view.ChatFrame;
+
 import util.ObservableArrayList;
 import video.unicast.P2PVideoClient;
 import video.unicast.P2PVideoServer;
@@ -21,9 +23,9 @@ public class P2P extends Thread{
 	private String remoteIP;
 	private String remotePeerName;
 	
-	Socket textSocket; // TCP socket to send and receive text messages
-	BufferedWriter textWriter; // Para envio de mensagem
-	BufferedReader textReader; // Paraa recepção de mensagem
+	Socket textSocket; 			// TCP socket to send and receive text messages
+	BufferedWriter textWriter; 	// Para envio de mensagem
+	BufferedReader textReader; 	// Paraa recepção de mensagem
 	
 	private Socket controlConnection; // TCP socket used for control
 	private BufferedWriter controlWriter;
@@ -48,7 +50,10 @@ public class P2P extends Thread{
 	private MessageListener messageListener;
 	private PeerListener peerListener;
 	
+	
+	
 	boolean isConnected = false;
+	private ChatFrame chatFrame;
 	
 	/**
 	 * Construtor usado quando se deseja um objeto para 
@@ -149,16 +154,22 @@ public class P2P extends Thread{
 				// Encerrar Sevidor e Clientes de video
 				// Fechar sockets
 				String line = "";
-				while(true){
+				while(true && isConnected){
 					try {
 						line = getControlReader().readLine();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-					if( line!=null && line.contains("BYE"))
 						endConnection();
+					}
+					
+					if( line!=null && line.contains("BYE")){
+						System.out.println("RECEIVED BYe");
+						endConnection();
+					}
+						
 				}
+				
 				
 //				try{
 //					endConnection();
@@ -183,7 +194,7 @@ public class P2P extends Thread{
 			getControlWriter().append(request);
 			getControlWriter().flush();
 			this.endConnection();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -247,6 +258,9 @@ public class P2P extends Thread{
 					}
 				} catch(Exception e){
 					e.printStackTrace();
+					endConnection();
+					//isConnected = false;
+					return;
 				}
 			}
 		}.start();
@@ -258,24 +272,93 @@ public class P2P extends Thread{
 	 * */
 	private void endConnection() {
 		System.out.println("INICIANDO ENCERRAMENTO DA CONEXAO");
-		if(getControlConnection() == null) return;
+		if(getControlConnection() == null) 
+			return;
+		else
+			System.out.println("control connection is  not null");
+		
+		
 		try {
 			getControlWriter().close();
+			System.out.println("closed control writer");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print("Error closing control writer");
+		}
+		
+		try {
 			getControlReader().close();
+			System.out.println("closed control reader");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print("Error closing control reader");
+		}
+		
+		try {
 			getControlConnection().close();
+			System.out.println("closed control connection");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print("Error closing control connection");
+		}
+		
+		try {
+			//textReader.close();
 			
-			textReader.close();
+			System.out.println("closed text reader");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print("Error closing text reader");
+		}
+		
+		try {
 			textWriter.close();
-			textSocket.close();
+			System.out.println("closed text writer");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print("Error closing text writer");
+		}
+		
+		
+		try {
 			
-			localVideoClient.endConnection();
-			localVideoServer.endConnection();
+			//getControlWriter().close();
+			//getControlReader().close();
+			//getControlConnection().close();
 			
-			isConnected = false;
+			//textReader.close();
+			//textWriter.close();
+			if(textSocket !=  null){
+				textSocket.close();
+				System.out.println("closed text soxket");
+			}
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		System.out.println("STOPPING VIDEO SERVERS");
+		
+		try {
+			if(localVideoClient != null)
+			localVideoClient.endConnection();
+			System.out.println("cliente de video encerrado");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			localVideoServer.endConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		isConnected = false;
+		this.chatFrame.dispose();
+		
 		System.out.println("CONEXAO ENCERRADA");
 	}
 
@@ -358,5 +441,10 @@ public class P2P extends Thread{
 
 	public BufferedReader getControlReader() {
 		return controlReader;
+	}
+
+	public void setChatFrame(ChatFrame c) {
+		this.chatFrame = c;
+		
 	}
 }
