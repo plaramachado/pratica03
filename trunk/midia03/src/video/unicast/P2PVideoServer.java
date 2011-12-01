@@ -87,9 +87,12 @@ public class P2PVideoServer implements Observer{
 				
 			} catch (IOException e) {				
 				e.printStackTrace();
-			}			
+			}	
+			System.out.println("Were done here");
 			done = true; // Espera apenas uma conexao. Sim, é assim que fazemos. =P
 		}
+		
+		System.out.println("Thread do servidor de video encerrada");
 	}
 	// FIM MOD 2.01
 	
